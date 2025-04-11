@@ -92,6 +92,8 @@ A script to adjust the `PYTHONPATH` if necessary. This ensures that the applicat
    ```
 
 2. Install the dependencies:
+   
+   First, make sure you have develep for desktop(7gb): https://visualstudio.microsoft.com/es/visual-cpp-build-tools/
    ```bash
    pip install -r requirements.txt
    ```
