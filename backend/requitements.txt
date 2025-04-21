@@ -1,0 +1,25 @@
+# Core libraries
+loguru
+
+# LangChain and related packages
+langchain
+langchain-chroma
+langchain-community
+langchain-google-genai
+langchain-ollama
+langsmith
+langgraph
+
+# Web scraping and markdown processing
+bs4
+markdownify
+
+# Environment variables
+dotenv
+
+# Natural language processing
+nltk
+rouge-score
+
+flask
+flask_cors
