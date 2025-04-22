@@ -2,15 +2,18 @@
 // ---------------------------------------------------------------
 // Main floating panel for the chatbot interface. Contains control buttons,
 // the chat area (messages or welcome), and the input area for sending messages.
+// All resize logic and panel style are handled by the useResizablePanel hook.
 
+import React from "react";
 import ChatbotPanelControls from "./ChatbotPanelControls.jsx";
 import ChatbotPanelWelcome from "./ChatbotPanelWelcome.jsx";
 import ChatbotPanelMessagesArea from "@/ui/components/chatbot/ChatbotPanelMessagesArea.jsx";
 import ChatbotPanelInputArea from "@/ui/components/chatbot/ChatbotPanelInputArea.jsx";
+import { useResizablePanel } from "@/core/hooks/useResizablePanel.js";
+import ResizeHandle from "./ResizeHandle.jsx";
 
-// Frosted glass effect for chatbot panel using custom theme colors
+// Tailwind/utility classes for panel appearance
 const FROSTED_GLASS_PANEL_CLASS = "backdrop-blur-lg";
-
 const SHADOW_PANEL_CLASS =
   "bg-dark-gray/80 shadow-[0_6px_12px_rgba(0,0,0,0.25),0_4px_8px_rgba(0,0,0,0.15)]";
 
@@ -18,6 +21,7 @@ const SHADOW_PANEL_CLASS =
  * ChatbotPanel
  *
  * Floating panel UI for the chatbot. Renders controls, messages/welcome, and input.
+ * Handles resizing from the top-left corner using a custom hook and handle.
  *
  * Props:
  * @param {Object} props
@@ -39,28 +43,31 @@ function ChatbotPanel({
   onPin,
   onClear,
   onClose,
-  inputRef, // For focusing the input
-  containerRef, // For click-outside detection
+  inputRef,
+  containerRef,
 }) {
-  // Decide what to show in the main chat area
-  let mainContent;
-  if (messages.length > 0) {
-    mainContent = (
+  // Get panel style, resize state, and handle event from the custom hook
+  const { panelStyle, handleResizeHandleMouseDown } = useResizablePanel({
+    containerRef,
+  });
+
+  // Decide what to show in the main chat area (welcome or messages)
+  const mainContent =
+    messages.length > 0 ? (
       <ChatbotPanelMessagesArea messages={messages} isLoading={isLoading} />
+    ) : (
+      <ChatbotPanelWelcome />
     );
-  } else {
-    mainContent = <ChatbotPanelWelcome />;
-  }
 
   return (
     <div
       ref={containerRef}
       className={`flex flex-col gap-6 p-6 rounded-3xl ${SHADOW_PANEL_CLASS} ${FROSTED_GLASS_PANEL_CLASS}`}
-      style={{
-        width: "min(max(480px, 50vw), 900px)",
-        height: "90vh",
-      }}
+      style={panelStyle}
     >
+      {/* Resize handle in the top-left corner */}
+      <ResizeHandle onMouseDown={handleResizeHandleMouseDown} />
+
       {/* Top control buttons: pin, clear, close */}
       <ChatbotPanelControls
         pinned={pinned}

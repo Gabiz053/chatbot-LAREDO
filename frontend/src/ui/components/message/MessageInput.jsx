@@ -41,7 +41,7 @@ function MessageInput({
   return (
     // Main input container with styling and animation
     <div
-      className={`bg-gray flex items-center pl-5 pr-11 py-4 rounded-3xl relative border border-light-blue/30 ${animationClasses}`}
+      className={`bg-gray flex items-center pl-5 pr-11 py-3 rounded-3xl relative border border-light-blue/30 ${animationClasses}`}
     >
       {/* Textarea for user message input */}
       <MessageTextarea

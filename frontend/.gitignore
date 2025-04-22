@@ -73,3 +73,5 @@ Icon?
 
 # Custom: ignore config backups
 config/*.bak
+
+*.package-lock.json
