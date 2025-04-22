@@ -13,9 +13,9 @@ import { useResizablePanel } from "@/core/hooks/useResizablePanel.js";
 import ResizeHandle from "./ResizeHandle.jsx";
 
 // Tailwind/utility classes for panel appearance
-const FROSTED_GLASS_PANEL_CLASS = "backdrop-blur-lg";
-const SHADOW_PANEL_CLASS =
-  "bg-dark-gray/80 shadow-[0_6px_12px_rgba(0,0,0,0.25),0_4px_8px_rgba(0,0,0,0.15)]";
+const FROSTED_GLASS_PANEL = "backdrop-blur-lg";
+const SHADOW_PANEL =
+  "bg-dark-gray/80 shadow-chatbot";
 
 /**
  * ChatbotPanel
@@ -62,7 +62,7 @@ function ChatbotPanel({
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col gap-6 p-6 rounded-3xl ${SHADOW_PANEL_CLASS} ${FROSTED_GLASS_PANEL_CLASS}`}
+      className={`flex flex-col gap-6 p-6 rounded-3xl ${SHADOW_PANEL} ${FROSTED_GLASS_PANEL}`}
       style={panelStyle}
     >
       {/* Resize handle in the top-left corner */}

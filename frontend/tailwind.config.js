@@ -1,6 +1,7 @@
 // tailwind.config.js - Tailwind CSS configuration for Laredo Chatbot
 // ---------------------------------------------------------------
 import colors from "./theme/colors.js";
+import shadows from "./theme/shadows.js";
 import animations from "./theme/animations.js";
 import keyframes from "./theme/keyframes.js";
 
@@ -12,6 +13,7 @@ export default {
       colors,
       animation: animations,
       keyframes,
+      boxShadow: shadows,
     },
   },
   plugins: [],

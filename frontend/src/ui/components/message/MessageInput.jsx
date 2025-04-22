@@ -36,7 +36,7 @@ function MessageInput({
 
   // Animation classes for the input container
   // Adds a pulse effect when there is text in the input
-  const animationClasses = `shadow-[0_10px_5px_rgba(0,0,0,0.25)]${newMessage ? " animate-chatbot-pulse-shadow" : ""}`;
+  const animationClasses = `shadow-chatbot${newMessage ? " animate-chatbot-pulse-shadow" : ""}`;
 
   return (
     // Main input container with styling and animation

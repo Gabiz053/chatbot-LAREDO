@@ -2,7 +2,7 @@
 // Each key defines a custom animation for chatbot components.
 
 // Modularized boxShadow values for reuse
-const baseShadow = "0 6px 12px rgba(0,0,0,0.25), 0 4px 8px rgba(0,0,0,0.15)";
+const baseShadow = "theme('boxShadow.chatbot')";
 const pulseShadow = `${baseShadow}, 0 0 20px 5px theme('colors.light-blue / 0.3'), 0 0 25px 10px theme('colors.light-blue / 0.3')`;
 const noShadow = `${baseShadow}, 0 0 0 0 theme('colors.light-blue / 0'), 0 0 0 0 theme('colors.light-blue / 0')`;
 

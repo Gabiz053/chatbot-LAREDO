@@ -3,8 +3,9 @@ import chatIcon from "@/assets/images/icon-chat.svg";
 // Standardized button size using Tailwind's w-16 h-16
 const BASE_BTN_CLASS =
   "flex items-center justify-center w-16 h-16 rounded-3xl hover:animate-chatbot-pulse-shadow-btn";
-const SHADOW_BTN_CLASS =
-  "bg-gray shadow-[0_6px_12px_rgba(0,0,0,0.25),0_4px_8px_rgba(0,0,0,0.15)] backdrop-blur-lg";
+const FROSTED_GLASS_PBUTTON = "backdrop-blur-lg";
+const SHADOW_BUTTON =
+  "bg-dark-gray/80 shadow-chatbot";
 
 /**
  * ChatbotButton - A reusable floating action button for the chatbot UI.
@@ -25,7 +26,7 @@ function ChatbotButton({ className = "", icon, onClick, title, ariaLabel }) {
     <button
       type="button"
       onClick={onClick}
-      className={`${BASE_BTN_CLASS} ${SHADOW_BTN_CLASS} ${className}`}
+      className={`${BASE_BTN_CLASS} ${SHADOW_BUTTON}  ${FROSTED_GLASS_PBUTTON} ${className}`}
       title={title}
       aria-label={ariaLabel || title}
     >

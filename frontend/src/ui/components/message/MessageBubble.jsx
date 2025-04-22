@@ -7,10 +7,10 @@ import MessageError from "@/ui/components/message/MessageError.jsx";
 import Markdown from "react-markdown";
 
 // Common background and shadow for all message bubbles
-const commonBgShadow =
-  "bg-gray shadow-[0_6px_12px_rgba(0,0,0,0.25),0_4px_8px_rgba(0,0,0,0.15)]";
+const SHADOW_CHAT =
+  "bg-gray shadow-chatbot";
 // Common bubble shape, padding, and text color (text-chat-white)
-const commonBubble = "text-chat-white break-words px-5 py-3 rounded-3xl";
+const COMMON_STYLE = "text-chat-white break-words px-5 py-3 rounded-3xl";
 
 /**
  * MessageBubble Component
@@ -30,7 +30,7 @@ const MessageBubble = ({ role, content, error }) => {
   if (role === "user") {
     return (
       <div
-        className={`${commonBgShadow} ${commonBubble} max-w-[70%] w-fit ml-auto`}
+        className={`${SHADOW_CHAT} ${COMMON_STYLE} max-w-[70%] w-fit ml-auto`}
       >
         <span className="block whitespace-pre-line">{content}</span>
       </div>
@@ -39,7 +39,7 @@ const MessageBubble = ({ role, content, error }) => {
 
   // assistant
   return (
-    <div className={`${commonBubble}`}>
+    <div className={`${COMMON_STYLE}`}>
       <Markdown className="markdown-container">{content}</Markdown>
     </div>
   );

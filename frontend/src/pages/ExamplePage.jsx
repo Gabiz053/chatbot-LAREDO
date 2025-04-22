@@ -51,14 +51,14 @@ function ExamplePage() {
 
   return (
     <div className="min-h-screen w-full bg-gray-light flex flex-col items-center justify-center relative overflow-hidden">
-      <h1 className="text-4xl font-bold text-gray-dark mb-6">
+      <h1 className="text-4xl font-bold mb-6">
         Página de ejemplo
       </h1>
       <p className="text-lg text-gray-light mb-4">
         Este es un contenido de ejemplo para comprobar que el chatbot flota por
         encima de la página.
       </p>
-      <div className="w-full max-w-xl bg-white rounded-xl shadow p-8 text-gray-dark mb-8">
+      <div className="w-full max-w-xl bg-white rounded-xl shadow-chatbot p-8 text-gray-dark mb-8">
         <h2 className="text-2xl font-semibold mb-2">Contenido principal</h2>
         <p className="mb-2">
           Puedes interactuar con el chatbot en la esquina inferior derecha y
@@ -71,7 +71,7 @@ function ExamplePage() {
         </ul>
       </div>
       <button
-        className="mb-8 px-6 py-2 rounded-lg bg-light-blue text-gray-dark font-bold shadow hover:bg-gray-light transition"
+        className="mb-8 px-6 py-2 rounded-lg bg-light-blue text-gray-dark font-bold shadow-chatbot hover:bg-gray-light transition"
         onClick={handleAddSquares}
         type="button"
       >
@@ -114,16 +114,16 @@ function BouncingSquare({ color, initialTop, initialLeft }) {
           top = 0;
           vTop = -vTop;
         }
-        if (top > 92) {
-          top = 92;
+        if (top > 100) {
+          top = 100;
           vTop = -vTop;
         }
         if (left < 0) {
           left = 0;
           vLeft = -vLeft;
         }
-        if (left > 92) {
-          left = 92;
+        if (left > 100) {
+          left = 100;
           vLeft = -vLeft;
         }
         return { top, left, vTop, vLeft };
@@ -144,7 +144,7 @@ function BouncingSquare({ color, initialTop, initialLeft }) {
         height: 40,
         background: color,
         borderRadius: 8,
-        boxShadow: "0 4px 16px rgba(0,0,0,0.10)",
+        boxShadow: "0 6px 12px rgba(0,0,0,0.25), 0 4px 8px rgba(0,0,0,0.15)", // Igual que shadow-chatbot
         zIndex: 30,
         pointerEvents: "none",
         transition: "box-shadow 0.2s",

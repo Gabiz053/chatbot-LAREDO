@@ -7,8 +7,8 @@ import closeIcon from "@/assets/images/icon-close.svg";
 const BASE_BTN_CLASS = `flex items-center justify-center w-8 h-8 rounded-3xl hover:animate-chatbot-pulse-shadow-btn`;
 
 // Shared shadow style
-const SHADOW_BTN_CLASS =
-  "bg-gray shadow-[0_6px_12px_rgba(0,0,0,0.25),0_4px_8px_rgba(0,0,0,0.15)]";
+const SHADOW_BUTTON =
+  "bg-gray shadow-chatbot";
 
 /**
  * Generic control button for the chatbot panel.
@@ -22,7 +22,7 @@ function ChatbotControlButton({ className = "", icon, onClick, title }) {
   return (
     <button
       onClick={onClick}
-      className={`${BASE_BTN_CLASS} ${SHADOW_BTN_CLASS} ${className}`}
+      className={`${BASE_BTN_CLASS} ${SHADOW_BUTTON} ${className}`}
       title={title}
     >
       <img src={icon} className="w-5 h-5" />
