@@ -39,7 +39,7 @@ function useClickOutside(ref, handler, enabled) {
      * @param {MouseEvent} event
      */
     (event) => handleOutsideClick(ref, handler, event),
-    [ref, handler]
+    [ref, handler],
   );
 
   useEffect(() => {

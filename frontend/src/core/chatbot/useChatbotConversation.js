@@ -1,9 +1,13 @@
 // useChatbotConversation.js - Custom React hook for chatbot state and logic
 // -------------------------------------------------------------------------
-// Manages chat messages, loading state, persistence, and API communication for the chatbot UI.
+// Provides all state and actions for the chatbot UI, including message history,
+// loading state, persistence, and both block and streaming API communication.
 
 import { useState, useEffect, useCallback } from "react";
-import { fetchAssistantResponse } from "@/core/api/index.js";
+import {
+  fetchAssistantResponse,
+  streamAssistantResponse,
+} from "@/core/api/index.js";
 import {
   loadMessages,
   saveMessages,
@@ -16,22 +20,26 @@ import {
 
 /**
  * @typedef {Object} ChatbotConversationApi
- * @property {Array<{role: string, content: string}>} messages - The chat message history
+ * @property {Array<{role: string, content: string}>} messages - The chat message history (user and assistant)
  * @property {boolean} isLoading - Whether the assistant is generating a response
- * @property {(userInput: string) => Promise<void>} sendMessage - Sends a user message and fetches the assistant's reply
- * @property {() => void} clearChat - Clears the chat history
+ * @property {(userInput: string) => Promise<void>} sendMessageBlock - Sends a user message and fetches the assistant's reply in block mode (classic, non-streaming)
+ * @property {(userInput: string) => Promise<void>} sendMessageStream - Sends a user message and fetches the assistant's reply in streaming mode (real-time chunks)
+ * @property {() => void} clearChat - Clears the chat history and localStorage
  */
 
 /**
- * useChatbotConversation - Custom React hook
+ * useChatbotConversation - Central React hook for chatbot conversation logic.
  *
- * Manages chatbot conversation state, persistence, and API calls.
+ * - Manages all chat state (messages, loading)
+ * - Persists chat history to localStorage
+ * - Provides two message sending modes: block (classic) and streaming (real-time)
  *
- * @returns {ChatbotConversationApi}
+ * @returns {ChatbotConversationApi} API for chatbot conversation state and actions
  */
 function useChatbotConversation() {
-  // clear chat only in the firt load of the page
-  // This is to prevent the chat from being cleared when the user refreshes the page
+  // --- Initialization and State ---
+
+  // On first page load, clear chat history (but not on refresh)
   if (
     typeof window !== "undefined" &&
     !sessionStorage.getItem("chatbot-initialized")
@@ -40,53 +48,53 @@ function useChatbotConversation() {
     sessionStorage.setItem("chatbot-initialized", "true");
   }
 
-  // State: chat messages and loading status
-  const [messages, setMessages] = useState(loadMessages); // Load messages from localStorage
-  const [isLoading, setIsLoading] = useState(false); // Track loading state
+  // State: chat messages (array of {role, content, ...}) and loading status
+  const [messages, setMessages] = useState(loadMessages); // Load from localStorage
+  const [isLoading, setIsLoading] = useState(false); // True while assistant is responding
 
-  // Effect: persist messages to localStorage whenever they change
+  // Persist messages to localStorage on every change
   useEffect(() => {
     saveMessages(messages);
   }, [messages]);
 
-  // Clears the chat history and localStorage
+  // --- Chat Management Actions ---
+
+  /**
+   * Clears the chat history and removes it from localStorage.
+   * Use this to reset the conversation.
+   */
   const clearChat = useCallback(() => {
     setMessages([]);
     clearStoredMessages();
   }, []);
 
+  // --- Message Sending Modes ---
+
   /**
-   * Sends a user message and fetches the assistant's reply.
-   * Ignores empty or duplicate submissions while loading.
+   * Sends a user message and fetches the assistant's reply in block mode (classic, non-streaming).
+   * The assistant's full response is shown only when complete.
    *
    * @param {string} userInput - The user's message to send
    * @returns {Promise<void>}
    */
-  const sendMessage = useCallback(
-    /**
-     * @param {string} userInput
-     */
+  const sendMessageBlock = useCallback(
+    /** @param {string} userInput - The user's message to send */
     async (userInput) => {
-      if (isLoading) return; // Prevent multiple sends
+      if (isLoading) return; // Prevent concurrent sends
       const trimmedMessage =
         typeof userInput === "string" ? userInput.trim() : "";
       if (!trimmedMessage) return; // Ignore empty input
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        createUserMessage(trimmedMessage),
-      ]);
+      setMessages((prev) => [...prev, createUserMessage(trimmedMessage)]);
       setIsLoading(true);
       try {
-        // Fetch assistant's reply from API
         const assistantReply = await fetchAssistantResponse(trimmedMessage);
-        setMessages((prevMessages) => [
-          ...prevMessages,
+        setMessages((prev) => [
+          ...prev,
           createAssistantMessage(assistantReply),
         ]);
       } catch {
-        // On error, show error message with error: true
-        setMessages((prevMessages) => [
-          ...prevMessages,
+        setMessages((prev) => [
+          ...prev,
           {
             role: "assistant",
             content: "Error generating response.",
@@ -97,15 +105,61 @@ function useChatbotConversation() {
         setIsLoading(false);
       }
     },
-    [isLoading]
+    [isLoading],
   );
 
-  // Return the chatbot conversation API
+  /**
+   * Sends a user message and fetches the assistant's reply in streaming mode (real-time chunks).
+   * The assistant's message is updated progressively as each chunk arrives.
+   *
+   * @param {string} userInput - The user's message to send
+   * @returns {Promise<void>}
+   */
+  const sendMessageStream = useCallback(
+    /** @param {string} userInput - The user's message to send */
+    async (userInput) => {
+      if (isLoading) return; // Prevent concurrent sends
+      const trimmedMessage =
+        typeof userInput === "string" ? userInput.trim() : "";
+      if (!trimmedMessage) return; // Ignore empty input
+      setMessages((prev) => [...prev, createUserMessage(trimmedMessage)]);
+      setIsLoading(true);
+      // Prepare a mutable assistant message object for progressive update
+      let assistantMsg = { role: "assistant", content: "" };
+      setMessages((prev) => [...prev, assistantMsg]);
+      try {
+        await streamAssistantResponse(trimmedMessage, (chunk) => {
+          assistantMsg.content += chunk;
+          setMessages((prev) => {
+            // Only update the last message (the assistant's)
+            const updated = [...prev];
+            updated[updated.length - 1] = { ...assistantMsg };
+            return updated;
+          });
+        });
+      } catch {
+        setMessages((prev) => [
+          ...prev.slice(0, -1),
+          {
+            role: "assistant",
+            content: "Error generating response.",
+            error: true,
+          },
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isLoading],
+  );
+
+  // --- Return API ---
   return {
-    messages,
-    isLoading,
-    sendMessage,
-    clearChat,
+    messages, // Array of chat messages (user and assistant)
+    isLoading, // True if assistant is generating a response
+    sendMessageBlock, // Send message in block mode (classic)
+    sendMessageStream, // Send message in streaming mode (real-time)
+    clearChat, // Clear chat history
   };
 }
 

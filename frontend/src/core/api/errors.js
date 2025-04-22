@@ -7,7 +7,7 @@
  */
 export function throwNetworkError(error) {
   throw new Error(
-    `Network error: Unable to reach the assistant API. ${error?.message || ""}`
+    `Network error: Unable to reach the assistant API. ${error?.message || ""}`,
   );
 }
 
@@ -18,7 +18,7 @@ export function throwNetworkError(error) {
  */
 export function throwInvalidJsonError(error) {
   throw new Error(
-    `Invalid JSON response from assistant API. ${error?.message || ""}`
+    `Invalid JSON response from assistant API. ${error?.message || ""}`,
   );
 }
 
@@ -30,7 +30,7 @@ export function throwInvalidJsonError(error) {
  */
 export function throwApiError(response, data) {
   throw new Error(
-    data.error || `Error: ${response.status} ${response.statusText}`
+    data.error || `Error: ${response.status} ${response.statusText}`,
   );
 }
 

@@ -7,8 +7,7 @@ import MessageError from "@/ui/components/message/MessageError.jsx";
 import Markdown from "react-markdown";
 
 // Common background and shadow for all message bubbles
-const SHADOW_CHAT =
-  "bg-gray shadow-chatbot";
+const SHADOW_CHAT = "bg-gray shadow-chatbot";
 // Common bubble shape, padding, and text color (text-chat-white)
 const COMMON_STYLE = "text-chat-white break-words px-5 py-3 rounded-3xl";
 

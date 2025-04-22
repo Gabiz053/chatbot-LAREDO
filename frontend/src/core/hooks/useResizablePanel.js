@@ -29,11 +29,11 @@ export function useResizablePanel({ containerRef }) {
   const getInitialSize = () => ({
     width: Math.min(
       Math.max(480, window.innerWidth * 0.5),
-      window.innerWidth * 0.9
+      window.innerWidth * 0.9,
     ),
     height: Math.min(
       Math.max(400, window.innerHeight * 0.9),
-      window.innerHeight * 0.9
+      window.innerHeight * 0.9,
     ),
   });
 
@@ -66,11 +66,11 @@ export function useResizablePanel({ containerRef }) {
     setSize({
       width: Math.max(
         320,
-        Math.min(startSize.current.width + dx, window.innerWidth * 0.9)
+        Math.min(startSize.current.width + dx, window.innerWidth * 0.9),
       ),
       height: Math.max(
         400,
-        Math.min(startSize.current.height + dy, window.innerHeight * 0.9)
+        Math.min(startSize.current.height + dy, window.innerHeight * 0.9),
       ),
     });
   };

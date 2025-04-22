@@ -18,15 +18,27 @@ import useAutoScroll from "@/core/hooks/useScrollToBottom.js";
  * @returns {JSX.Element}
  */
 function ChatbotPanelMessagesArea({ messages, isLoading }) {
-  // Ref that triggers auto-scroll when messages or loading state change
-  const scrollContentRef = useAutoScroll([messages.length, isLoading]);
+  // Detect the last message object (for scroll logic)
+  const lastMessage =
+    messages.length > 0 ? messages[messages.length - 1] : undefined;
+  // Use the last message's role and content as dependencies for the scroll hook.
+  // This ensures the scroll updates not only on new messages, but also when the assistant streams content.
+  const scrollContentRef = useAutoScroll(
+    [
+      messages.length, // triggers scroll on new message
+      isLoading, // triggers scroll on loading state change
+      lastMessage?.role, // triggers scroll if the last message changes role (user/assistant)
+      lastMessage?.content, // triggers scroll if the last message's content changes (important for streaming)
+    ],
+    lastMessage?.role,
+  ); // pass the last message's role for scroll direction logic
 
   return (
     <div
       className="flex-1 overflow-auto overflow-y-auto overflow-x-hidden pr-3"
       ref={scrollContentRef}
     >
-      {/* Renders the list of chat messages and loading indicator if needed */}
+      {/* Render the list of chat messages and loading indicator if needed */}
       <MessageList messages={messages} isLoading={isLoading} />
     </div>
   );

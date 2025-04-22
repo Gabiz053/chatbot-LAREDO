@@ -45,15 +45,13 @@ function ExamplePage() {
       /**
        * @param {Square[]} prev
        */
-      (prev) => [...prev, ...newSquares]
+      (prev) => [...prev, ...newSquares],
     );
   };
 
   return (
     <div className="min-h-screen w-full bg-gray-light flex flex-col items-center justify-center relative overflow-hidden">
-      <h1 className="text-4xl font-bold mb-6">
-        Página de ejemplo
-      </h1>
+      <h1 className="text-4xl font-bold mb-6">Página de ejemplo</h1>
       <p className="text-lg text-gray-light mb-4">
         Este es un contenido de ejemplo para comprobar que el chatbot flota por
         encima de la página.

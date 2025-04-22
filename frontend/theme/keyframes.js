@@ -102,6 +102,12 @@ const keyframes = {
     // 100%: Normal size
     "100%": { transform: "scale(1)", transformOrigin: "bottom right" },
   },
+
+  // Fade-in animation for chat message appearance
+  fade: {
+    "0%": { opacity: 0 },
+    "100%": { opacity: 1 },
+  },
 };
 
 export default keyframes;

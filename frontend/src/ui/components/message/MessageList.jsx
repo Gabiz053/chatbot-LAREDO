@@ -34,8 +34,14 @@ function MessageList({ messages, isLoading }) {
           error={!!m.error}
         />
       ))}
-      {/* Show the loading indicator if the assistant is thinking */}
-      {isLoading && <MessageLoading />}
+      {/* Always render MessageLoading, but toggle its visibility with opacity and pointer-events */}
+      <div
+        style={{ minHeight: "2.5em" }}
+        aria-hidden={!isLoading}
+        className={isLoading ? "" : "opacity-0 pointer-events-none select-none"}
+      >
+        <MessageLoading />
+      </div>
     </div>
   );
 }

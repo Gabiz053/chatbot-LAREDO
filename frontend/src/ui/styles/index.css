@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-
   /* Global Styles */
   body,
   html,
@@ -26,7 +25,6 @@
 }
 
 @layer components {
-
   /* Spinner Styles */
   .spinner-child {
     @apply absolute h-full w-full rounded-full bg-blue-200 opacity-0;
@@ -44,7 +42,7 @@
   }
 
   /* Remove bottom margin from the last child to avoid extra space */
-  .markdown-container> :last-child {
+  .markdown-container > :last-child {
     @apply mb-0;
   }
 

@@ -41,14 +41,14 @@ function ChatbotPortal() {
   const containerRef = useRef(null);
 
   // Chatbot conversation state and actions
-  const { messages, isLoading, sendMessage, clearChat } =
+  const { messages, isLoading, sendMessageStream, clearChat } =
     useChatbotConversation();
 
   // Close panel on outside click (unless pinned or animating out)
   useClickOutside(
     containerRef,
     handlePanelClose,
-    isOpen && !pinned && !isPanelAnimatingOut
+    isOpen && !pinned && !isPanelAnimatingOut,
   );
   // Focus input when panel opens
   useFocusOnOpen(isOpen && !isPanelAnimatingOut, inputRef);
@@ -67,7 +67,7 @@ function ChatbotPortal() {
         <ChatbotPanel
           messages={messages}
           isLoading={isLoading}
-          sendMessage={sendMessage}
+          sendMessage={sendMessageStream}
           pinned={pinned}
           onPin={handlePin}
           onClear={handleClearChat}
