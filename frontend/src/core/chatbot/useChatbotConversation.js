@@ -30,6 +30,16 @@ import {
  * @returns {ChatbotConversationApi}
  */
 function useChatbotConversation() {
+  // clear chat only in the firt load of the page
+  // This is to prevent the chat from being cleared when the user refreshes the page
+  if (
+    typeof window !== "undefined" &&
+    !sessionStorage.getItem("chatbot-initialized")
+  ) {
+    clearStoredMessages();
+    sessionStorage.setItem("chatbot-initialized", "true");
+  }
+
   // State: chat messages and loading status
   const [messages, setMessages] = useState(loadMessages); // Load messages from localStorage
   const [isLoading, setIsLoading] = useState(false); // Track loading state
@@ -77,7 +87,11 @@ function useChatbotConversation() {
         // On error, show error message with error: true
         setMessages((prevMessages) => [
           ...prevMessages,
-          { role: "assistant", content: "Error generating response.", error: true },
+          {
+            role: "assistant",
+            content: "Error generating response.",
+            error: true,
+          },
         ]);
       } finally {
         setIsLoading(false);

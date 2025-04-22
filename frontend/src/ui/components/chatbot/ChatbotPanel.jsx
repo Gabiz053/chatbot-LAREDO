@@ -2,7 +2,6 @@
 // ---------------------------------------------------------------
 // Main floating panel for the chatbot interface. Contains control buttons,
 // the chat area (messages or welcome), and the input area for sending messages.
-// All resize logic and panel style are handled by the useResizablePanel hook.
 
 import React from "react";
 import ChatbotPanelControls from "./ChatbotPanelControls.jsx";
@@ -13,9 +12,7 @@ import { useResizablePanel } from "@/core/hooks/useResizablePanel.js";
 import ResizeHandle from "./ResizeHandle.jsx";
 
 // Tailwind/utility classes for panel appearance
-const FROSTED_GLASS_PANEL = "backdrop-blur-lg";
-const SHADOW_PANEL =
-  "bg-dark-gray/80 shadow-chatbot";
+const SHADOW_PANEL = "bg-dark-gray/80 shadow-chatbot backdrop-blur-lg";
 
 /**
  * ChatbotPanel
@@ -62,7 +59,7 @@ function ChatbotPanel({
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col gap-6 p-6 rounded-3xl ${SHADOW_PANEL} ${FROSTED_GLASS_PANEL}`}
+      className={`flex flex-col gap-6 p-6 rounded-3xl ${SHADOW_PANEL}`}
       style={panelStyle}
     >
       {/* Resize handle in the top-left corner */}

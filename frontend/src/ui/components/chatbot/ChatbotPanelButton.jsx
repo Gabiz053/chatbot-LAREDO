@@ -4,8 +4,7 @@ import chatIcon from "@/assets/images/icon-chat.svg";
 const BASE_BTN_CLASS =
   "flex items-center justify-center w-16 h-16 rounded-3xl hover:animate-chatbot-pulse-shadow-btn";
 const FROSTED_GLASS_PBUTTON = "backdrop-blur-lg";
-const SHADOW_BUTTON =
-  "bg-dark-gray/80 shadow-chatbot";
+const SHADOW_BUTTON = "bg-dark-gray/80 shadow-chatbot";
 
 /**
  * ChatbotButton - A reusable floating action button for the chatbot UI.
@@ -37,18 +36,26 @@ function ChatbotButton({ className = "", icon, onClick, title, ariaLabel }) {
 }
 
 /**
- * ChatbotPanelButton - Floating action button to open the chatbot panel.
+ * ChatbotPanelButton
  *
- * Usage: Place this component where you want the chatbot open button to appear.
+ * Floating button to open the chatbot panel.
+ * Receives animation and extra styles through the `className` prop.
  *
  * Props:
  * @param {Object} props - Component props
- * @param {(e: React.MouseEvent<HTMLButtonElement>) => void} props.onClick - Handler to open the chatbot panel
- *
- * @returns {JSX.Element} The chatbot panel open button
+ * @param {(e: React.MouseEvent<HTMLButtonElement>) => void} props.onClick - Action when clicking (opens the panel)
+ * @param {string} [props.className] - Extra classes for animation or styles
  */
-const ChatbotPanelButton = ({ onClick }) => {
-  return <ChatbotButton onClick={onClick} icon={chatIcon} title="Open chat" />;
+const ChatbotPanelButton = ({ onClick, className = "" }) => {
+  // Renders the floating action button for the chatbot, with optional animation classes
+  return (
+    <ChatbotButton
+      onClick={onClick}
+      icon={chatIcon}
+      title="Open chat"
+      className={className}
+    />
+  );
 };
 
 export default ChatbotPanelButton;
