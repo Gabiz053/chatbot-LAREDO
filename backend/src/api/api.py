@@ -55,17 +55,19 @@ def create_app():
     @app.route("/chatbot/stream", methods=["POST"])
     def chatbot_stream_endpoint():
         """
-        Streaming endpoint: returns the chatbot response in real time using SSE.
+        Streaming endpoint: returns the chatbot response in real time using a custom delimiter (no SSE).
+        Each chunk ends with <END_OF_CHUNK> to avoid collision with markdown or other content.
         """
         try:
             question, error_response, status = _get_question_from_request()
             if error_response:
                 return error_response, status
 
-            # Async generator yielding SSE-formatted chunks from the chatbot service
+            # Async generator yielding raw chunks from the chatbot service
             async def async_event_stream():
                 async for chunk in chatbot_service.generate_response_stream(question):
-                    yield chunk
+                    # Instead of SSE, just append the custom delimiter
+                    yield chunk + "<END_OF_CHUNK>"
 
             # Sync generator bridging async generator to Flask's streaming response
             def sync_event_stream():
@@ -75,14 +77,13 @@ def create_app():
                 try:
                     while True:
                         chunk = loop.run_until_complete(agen.__anext__())
-                        # print(f"[SSE CHUNK SENT]: {repr(chunk)}")  # Debug: print each chunk before sending
-                        yield chunk  # Each chunk is already SSE-formatted ("data: ...\n\n")
+                        yield chunk  # Each chunk ends with <END_OF_CHUNK>
                 except StopAsyncIteration:
                     pass
                 finally:
                     loop.close()
 
-            # Return a streaming response with the correct SSE mimetype
+            # Return a streaming response with the correct mimetype
             return Response(sync_event_stream(), mimetype="text/event-stream")
         except Exception as e:
             return _handle_exception(e)

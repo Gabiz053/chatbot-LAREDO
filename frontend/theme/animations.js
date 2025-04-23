@@ -16,7 +16,7 @@ const animations = {
     "chatbotButtonExpand 0.3s cubic-bezier(0.25, 0.1, 0.25, 1.0)",
   "chatbot-button-contract":
     "chatbotButtonContract 0.3s cubic-bezier(0.25, 0.1, 0.25, 1.0)",
-  fade: "fade 1s cubic-bezier(0.25, 0.1, 0.25, 1.0)",
+  "assistant-message": "assistantMessage 2s cubic-bezier(0.25, 0.1, 0.25, 1.0)",
 };
 
 export default animations;

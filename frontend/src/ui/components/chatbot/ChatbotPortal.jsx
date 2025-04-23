@@ -12,6 +12,9 @@ import useChatbotAnimation from "@/core/chatbot/useChatbotAnimation.js";
 import useClickOutside from "@/core/hooks/useClickOutside.js";
 import useFocusOnOpen from "@/core/hooks/useFocusOnOpen.js";
 
+// Change this to false to use block mode (classic, non-streaming)
+const USE_STREAM = true;
+
 /**
  * ChatbotPortal
  *
@@ -41,8 +44,13 @@ function ChatbotPortal() {
   const containerRef = useRef(null);
 
   // Chatbot conversation state and actions
-  const { messages, isLoading, sendMessageStream, clearChat } =
-    useChatbotConversation();
+  const {
+    messages,
+    isLoading,
+    sendMessageBlock,
+    sendMessageStream,
+    clearChat,
+  } = useChatbotConversation();
 
   // Close panel on outside click (unless pinned or animating out)
   useClickOutside(
@@ -67,7 +75,7 @@ function ChatbotPortal() {
         <ChatbotPanel
           messages={messages}
           isLoading={isLoading}
-          sendMessage={sendMessageStream}
+          sendMessage={USE_STREAM ? sendMessageStream : sendMessageBlock}
           pinned={pinned}
           onPin={handlePin}
           onClear={handleClearChat}

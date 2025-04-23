@@ -21,9 +21,10 @@ const COMMON_STYLE = "text-chat-white break-words px-5 py-3 rounded-3xl";
  * @param {"user"|"assistant"} props.role - The role of the message sender
  * @param {string} props.content - The message content
  * @param {boolean} props.error - Whether the message is an error
+ * @param {boolean} props.animate - Whether to apply the fade animation
  * @returns {JSX.Element}
  */
-const MessageBubble = ({ role, content, error }) => {
+const MessageBubble = ({ role, content, error, animate }) => {
   if (error) return <MessageError />;
 
   if (role === "user") {
@@ -38,7 +39,9 @@ const MessageBubble = ({ role, content, error }) => {
 
   // assistant
   return (
-    <div className={`${COMMON_STYLE}`}>
+    <div
+      className={`${COMMON_STYLE}${animate ? " animate-assistant-message" : ""}`}
+    >
       <Markdown className="markdown-container">{content}</Markdown>
     </div>
   );

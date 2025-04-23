@@ -103,10 +103,19 @@ const keyframes = {
     "100%": { transform: "scale(1)", transformOrigin: "bottom right" },
   },
 
-  // Fade-in animation for chat message appearance
-  fade: {
-    "0%": { opacity: 0 },
-    "100%": { opacity: 1 },
+  // Assistant message fade-in animation para chat aesthetic
+  assistantMessage: {
+    "0%": {
+      opacity: 0,
+      transform: "scale(1.2)",
+      filter: "blur(6px)",
+    },
+
+    "100%": {
+      opacity: 1,
+      transform: "scale(1)",
+      filter: "blur(0)",
+    },
   },
 };
 

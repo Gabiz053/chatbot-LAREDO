@@ -64,25 +64,32 @@ export const fetchAssistantResponse = async (userMessage) => {
 };
 
 /**
- * Streams the assistant's response in real time using Server-Sent Events (SSE).
+ * Streams the assistant's response in real time using a custom chunk delimiter.
  *
- * This function sends a user message to the backend and processes the streamed
- * response as it arrives, chunk by chunk. Each chunk is delivered to the provided
- * callback, allowing the UI to update the assistant's message in real time (e.g.,
- * for a typing effect or progressive markdown rendering).
+ * The backend sends each chunk as:
+ *   <6 chars><content><2 chars><END_OF_CHUNK>
+ *   (e.g., 'data: Hello!\n\n<END_OF_CHUNK>')
+ *
+ * This function:
+ *   - Reads the response stream chunk by chunk
+ *   - Splits the buffer by the delimiter <END_OF_CHUNK>
+ *   - For each complete chunk, removes the first 6 and last 2 characters (legacy format)
+ *   - Calls onChunk(chunk) for each processed chunk
+ *   - Handles incomplete chunks by keeping them in the buffer for the next iteration
  *
  * @param {string} userMessage - The user's message to send to the chatbot.
- * @param {(chunk: string) => void} onChunk - Callback invoked for each chunk of the assistant's response.
- * @param {AbortSignal} [signal] - Optional AbortSignal to allow cancellation of the request (e.g., on navigation).
+ * @param {(chunk: string) => void} onChunk - Callback for each processed chunk of the assistant's response.
+ * @param {AbortSignal} [signal] - Optional AbortSignal to allow cancellation.
  * @returns {Promise<void>} Resolves when the stream ends or is aborted.
- * @throws {Error} If the input is invalid or the network/stream fails.
+ * @throws {Error} If the network or stream fails.
  */
 export const streamAssistantResponse = async (userMessage, onChunk, signal) => {
   // Validate input
   if (typeof userMessage !== "string" || !userMessage.trim()) {
     throw new Error("User message must be a non-empty string.");
   }
-  // Build the streaming endpoint URL
+
+  // Build the streaming endpoint URL and payload
   const endpoint = getChatbotEndpoint("/chatbot/stream");
   const payload = JSON.stringify({ question: userMessage.trim() });
 
@@ -110,26 +117,34 @@ export const streamAssistantResponse = async (userMessage, onChunk, signal) => {
   let buffer = "";
 
   try {
-    // Continuously read and process SSE events as they arrive
     while (true) {
+      // Read a chunk from the stream
       const { value, done } = await reader.read();
       if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-
-      // Split buffer into complete SSE events (separated by double newlines)
-      let events = buffer.split("\n\n");
-      buffer = events.pop() ?? ""; // Save incomplete event for next chunk
-      for (const event of events) {
-        // Standard SSE: each event starts with 'data:'
-        if (event.startsWith("data: ")) {
-          // Extract everything after 'data: ' (preserve newlines for markdown)
-          const chunk = event.slice(6);
-          if (chunk) onChunk(chunk);
+      // Decode the chunk and append to buffer
+      const decoded = decoder.decode(value, { stream: true });
+      buffer += decoded;
+      // Split buffer by the custom delimiter
+      let splitChunks = buffer.split("<END_OF_CHUNK>");
+      // All except the last are complete chunks
+      for (let i = 0; i < splitChunks.length - 1; i++) {
+        let chunk = splitChunks[i];
+        // Remove the first 6 and last 2 characters if chunk is long enough
+        // (for legacy compatibility with previous SSE format)
+        if (chunk.length > 8) {
+          chunk = chunk.slice(6, -2);
         }
+        if (chunk) onChunk(chunk);
       }
+      // The last part may be incomplete, keep it in buffer
+      buffer = splitChunks[splitChunks.length - 1];
+    }
+    // If anything remains in buffer at the end, process it as a final chunk
+    if (buffer.length > 8) {
+      const chunk = buffer.slice(6, -2);
+      if (chunk) onChunk(chunk);
     }
   } finally {
-    // Always release the reader lock when done
     reader.releaseLock();
   }
 };

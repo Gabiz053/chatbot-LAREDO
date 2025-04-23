@@ -25,6 +25,7 @@
     "react": "latest",
     "react-dom": "latest",
     "react-markdown": "latest",
+    "remark-gfm": "^4.0.1",
     "use-immer": "latest"
   },
   "devDependencies": {
