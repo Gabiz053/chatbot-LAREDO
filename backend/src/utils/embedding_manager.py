@@ -148,9 +148,11 @@ class EmbeddingManager:
 
         # Perform similarity search on the local collection
         results = self.local_collection.similarity_search(query, k)  # type: ignore
-        
+
         for result in results:
-            logger.debug(f"Found local document: {result.page_content[:50]} and {result.id}")
+            logger.debug(
+                f"Found local document: {result.page_content[:50]} and {result.id}"
+            )
 
         return results
 
@@ -169,9 +171,11 @@ class EmbeddingManager:
 
         # Perform similarity search on the web collection
         results = self.web_collection.similarity_search(query, k)  # type: ignore
-        
+
         for result in results:
-            logger.debug(f"Found web document: {result.page_content[:50]} and {result.id}")
+            logger.debug(
+                f"Found web document: {result.page_content[:50]} and {result.id}"
+            )
 
         return results
 

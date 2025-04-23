@@ -48,12 +48,7 @@ Question:
 
 Response Instructions:
 1. Use the provided context to answer the question accurately and clearly.
-2. Address only the topics present in the context, unless the question is personal.
-3. If the context does not provide enough information to answer, respond to it with your knoweledge. If unable to find relevant information, indicate that you are unable to answer at the moment.
-4. Provide friendly, detailed explanations and break down concepts so that the answer is easy to understand.
 5. Answer directly using Markdown formatting (headers, lists, code blocks, etc.) to enhance readability.
-6. Do not invent details or hallucinate; rely on the given context and any additional information found during your search.
-7. If the question appears ambiguous, review previous messages and the context to clarify its intent before answering.
 8. Maintain a warm, engaging tone throughout the response.
 """,
 )

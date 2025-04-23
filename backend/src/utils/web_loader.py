@@ -41,8 +41,10 @@ class WebLoader:
             Optional[str]: The HTML content of the page if successful, None otherwise.
         """
         try:
-            response: requests.Response = requests.get(url)
+            logger.debug(f"Fetching URL: {url}")
+            response: requests.Response = requests.get(url, timeout=10)
             response.raise_for_status()
+            logger.info(f"Fetched URL successfully: {url[-30:]}")
             return response.text
         except requests.exceptions.RequestException as e:
             logger.error(f"Error fetching URL {url}: {e}")
@@ -157,22 +159,27 @@ class WebLoader:
             Optional[Document]: A Document object if successful, None otherwise.
         """
         try:
+            logger.debug(f"Start fetch_and_parse for: {url}")
             html_content: Optional[str] = self._fetch_html(url)
             if not html_content:
+                logger.error(f"No HTML content for: {url}")
                 return None
 
             soup: Optional[BeautifulSoup] = self._parse_html(html_content)
             if not soup:
+                logger.error(f"No soup for: {url}")
                 return None
 
             article_html: Optional[str] = self._extract_article(soup)
             if not article_html:
+                logger.error(f"No article found for: {url}")
                 return None
 
             markdown_content: str = self._convert_to_markdown(article_html)
             metadata: Dict[str, str] = self._extract_metadata(soup, url)
             metadata["html_content_length"] = str(len(markdown_content))
 
+            logger.debug(f"Document created for: {url}")
             return self._create_document(markdown_content, metadata)
         except Exception as e:
             logger.error(f"Error fetching and parsing URL {url}: {e}")
@@ -185,10 +192,9 @@ class WebLoader:
         Returns:
             List[Document]: A list of Document objects containing the content of the parsed web pages.
         """
-
         documents: List[Document] = []
         try:
-            with ThreadPoolExecutor(max_workers=2) as executor:
+            with ThreadPoolExecutor(max_workers=20) as executor:
                 future_to_url = {
                     executor.submit(self._fetch_and_parse, url): url
                     for url in self.urls
@@ -196,7 +202,7 @@ class WebLoader:
                 for future in as_completed(future_to_url):
                     url = future_to_url[future]
                     try:
-                        logger.info(f"Loading URL: {url}")
+                        logger.info(f"Loading URL: {url[-30:]}")
                         document = future.result()
                         if document:
                             documents.append(document)
@@ -204,6 +210,6 @@ class WebLoader:
                         logger.error(f"Error getting document for URL {url}: {e}")
         except Exception as e:
             logger.error(f"Error getting documents: {e}")
-            
+
         logger.info(f"All documents loaded: {len(documents)}")
         return documents

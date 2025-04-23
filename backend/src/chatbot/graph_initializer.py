@@ -108,8 +108,8 @@ class GraphInitializer:
 
         query = " ".join(str(q) for q in question)
 
-        local_docs = self._embedding_manager.query_local_embeddings(query=query, k=3)
-        return {"local_context": local_docs} # type: ignore
+        local_docs = self._embedding_manager.query_local_embeddings(query=query, k=4)
+        return {"local_context": local_docs}  # type: ignore
 
     def search_web(self, state: SearchState) -> GenerationState:
         """
@@ -125,7 +125,7 @@ class GraphInitializer:
 
         query = " ".join(str(q) for q in question)
 
-        web_docs = self._embedding_manager.query_web_embeddings(query=query, k=1)
+        web_docs = self._embedding_manager.query_web_embeddings(query=query, k=2)
         return {"web_context": web_docs}  # type: ignore
 
     def generate_answer(self, state: GenerationState) -> SummarizationState:
@@ -307,7 +307,9 @@ class GraphInitializer:
         Creates and compiles the LLM invocation subgraph.
         """
         logger.info("Creating subgraph for LLM invocation.")
-        llm_graph: StateGraph = StateGraph(input=GenerationState, output=SummarizationState)
+        llm_graph: StateGraph = StateGraph(
+            input=GenerationState, output=SummarizationState
+        )
 
         # Add nodes for generating answers and summarizing conversation
         llm_graph.add_node("generate_answer", self.generate_answer)  # type: ignore

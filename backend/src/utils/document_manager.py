@@ -17,6 +17,8 @@ from src.utils.logger_manager import logger
 from src.utils.directory_loader import DirectoryLoader
 from src.utils.web_loader import WebLoader
 
+import re
+
 
 class DocumentManager:
     """
@@ -27,6 +29,7 @@ class DocumentManager:
         self,
         directory_path: Optional[str] = None,
         web_paths: Optional[List[str]] = None,
+        plain_words_only: bool = True,
     ) -> None:
         """
         Initializes the DocumentManager by loading and splitting documents.
@@ -34,6 +37,7 @@ class DocumentManager:
         Args:
             directory_path (Optional[str]): Path to the directory containing Markdown files.
             web_paths (Optional[List[str]]): List of web document URLs.
+            plain_words_only (bool): If True, sections will be converted to plain words only.
 
         Raises:
             ValueError: If neither 'directory_path' nor 'web_paths' is provided.
@@ -49,6 +53,8 @@ class DocumentManager:
         self.web_paths = web_paths
         self._web_documents: List[Document] = []
         self._web_sections: List[Document] = []
+
+        self._plain_words_only = plain_words_only
 
         # Execute loading and splitting in parallel
         with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -91,38 +97,73 @@ class DocumentManager:
         loader = WebLoader(urls=self.web_paths)
         self._web_documents = loader.get_documents()
 
+    def _process_section(self, section: str) -> str:
+        """Process a section according to the plain_words_only flag, cleaning markdown
+        symbols, images, links, tables, footnotes, and formatting text."""
+        if self._plain_words_only:
+            import re
+
+            text = section
+            # Remove code blocks (```...``` including content)
+            text = re.sub(r"```[\s\S]*?```", "", text)
+            # Remove images ![alt](url)
+            text = re.sub(r"!\[[^\]]*\]\([^\)]*\)", "", text)
+            # Remove links [text](url)
+            text = re.sub(r"\[[^\]]*\]\([^\)]*\)", "", text)
+            # Remove double-bracket links [[text]](url)
+            text = re.sub(r"\[\[[^\]]*\]\]\([^\)]*\)", "", text)
+            # Remove reference-style links [text][id]
+            text = re.sub(r"\[[^\]]*\]\[[^\]]*\]", "", text)
+            # Remove footnote references [^1]
+            text = re.sub(r"\[\^\d+\]", "", text)
+            # Remove tables (lines starting/containing |)
+            text = re.sub(r"^\s*\|.*\|\s*$", "", text, flags=re.MULTILINE)
+            # Remove table header separators (| --- |)
+            text = re.sub(r"^\s*\|?\s*:?-+:?\s*\|.*$", "", text, flags=re.MULTILINE)
+            # Remove HTML tags
+            text = re.sub(r"<[^>]+>", "", text)
+            # Remove headers (#, ##, ###, etc.)
+            text = re.sub(r"^#+\s*", "", text, flags=re.MULTILINE)
+            # Remove emphasis (*, _, **, __)
+            text = re.sub(r"(\*\*|__|\*|_)", "", text)
+            # Remove inline code/backticks
+            text = re.sub(r"`+", "", text)
+            # Remove blockquotes
+            text = re.sub(r"^>\s*", "", text, flags=re.MULTILINE)
+            # Remove unordered list markers (-, *, + at line start)
+            text = re.sub(r"^(\s*[-*+])\s+", "", text, flags=re.MULTILINE)
+            # Remove ordered list markers (1. 2. etc.)
+            # text = re.sub(r"^\s*\d+\.\s+", "", text, flags=re.MULTILINE)
+            # Remove horizontal rules
+            text = re.sub(r"^---+$", "", text, flags=re.MULTILINE)
+            # Remove extra newlines and trim
+            text = re.sub(r"\n+", "\n", text)
+            # Remove extra tabs and trim
+            text = re.sub(r"\t+", "\t", text)
+            text = text.strip()
+            return text
+        return section
+
     def _split_local_documents(self) -> None:
-        """Splits the local documents into sections, adding original metadata to each section."""
-        # Initialize the MarkdownTextSplitter
+        """Splits the local documents into sections, optionally as plain words only."""
         splitter = MarkdownTextSplitter(**MARKDOWN_SPLITTER_CONFIG)
-
-        # Process each local document
         for doc in self._local_documents:
-            # Split the content of the current document into sections
             split_sections = splitter.split_text(doc.page_content)
-
-            # Now, for each split section, add the original document metadata and append to sections list
             for section in split_sections:
-                # Create a new Document for each split section with the  metadata
+                processed_section = self._process_section(section)
                 self._local_sections.append(
-                    Document(page_content=section, metadata=doc.metadata)  # type: ignore
+                    Document(page_content=processed_section, metadata=doc.metadata)
                 )
 
     def _split_web_documents(self) -> None:
-        """Splits the web documents into sections, adding original metadata to each section."""
-        # Initialize the MarkdownTextSplitter
+        """Splits the web documents into sections, optionally as plain words only."""
         splitter = MarkdownTextSplitter(**MARKDOWN_SPLITTER_CONFIG)
-
-        # Process each web document
         for doc in self._web_documents:
-            # Split the content of the current document into sections
             split_sections = splitter.split_text(doc.page_content)
-
-            # Now, for each split section, add the original document metadata and append to sections list
             for section in split_sections:
-                # Create a new Document for each split section with the metadata
+                processed_section = self._process_section(section)
                 self._web_sections.append(
-                    Document(page_content=section, metadata=doc.metadata)  # type: ignore
+                    Document(page_content=processed_section, metadata=doc.metadata)
                 )
 
     @property
