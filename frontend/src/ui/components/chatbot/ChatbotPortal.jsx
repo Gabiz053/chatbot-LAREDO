@@ -56,7 +56,7 @@ function ChatbotPortal() {
   useClickOutside(
     containerRef,
     handlePanelClose,
-    isOpen && !pinned && !isPanelAnimatingOut,
+    isOpen && !pinned && !isPanelAnimatingOut
   );
   // Focus input when panel opens
   useFocusOnOpen(isOpen && !isPanelAnimatingOut, inputRef);

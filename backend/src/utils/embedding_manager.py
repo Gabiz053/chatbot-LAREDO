@@ -34,7 +34,6 @@ class EmbeddingManager:
         local_documents: List[Document],
         web_documents: List[Document],
         persist_directory: str = "./database",
-        reset_database: bool = False,
     ) -> None:
         """
         Initializes the EmbeddingManager, which manages embeddings for local and web
@@ -45,13 +44,11 @@ class EmbeddingManager:
             local_documents (List[Document]): Local documents to index.
             web_documents (List[Document]): Web documents to index.
             persist_directory (str): Directory to store the Chroma database.
-            reset_database (bool): If True, resets the existing Chroma database.
         """
         self.embedding_model = embedding_model
         self.local_documents = local_documents
         self.web_documents = web_documents
         self.persist_directory = persist_directory
-        self.reset_database = reset_database
 
         self.database: Optional[Chroma] = None
         self.local_collection: Optional[Chroma] = None
@@ -73,8 +70,7 @@ class EmbeddingManager:
         logger.info("Initializing database...")
 
         # Reset the database if required
-        if self.reset_database:
-            self._reset_database()
+        self._reset_database()
 
         # Load the Chroma database
         self.database = Chroma(
@@ -175,7 +171,7 @@ class EmbeddingManager:
         results = self.web_collection.similarity_search(query, k)  # type: ignore
         
         for result in results:
-            logger.debug(f"Found local document: {result.page_content[:50]} and {result.id}")
+            logger.debug(f"Found web document: {result.page_content[:50]} and {result.id}")
 
         return results
 
