@@ -188,17 +188,24 @@ class WebLoader:
     def get_documents(self) -> List[Document]:
         """
         Fetches and parses the list of URLs, returning a list of Document objects.
+        Retries up to 3 times for each URL that fails.
 
         Returns:
             List[Document]: A list of Document objects containing the content of the parsed web pages.
         """
         documents: List[Document] = []
-        try:
+        max_retries = 3  # Maximum number of retries per URL
+        url_attempts = {url: 0 for url in self.urls}  # Track attempts per URL
+        remaining_urls = set(self.urls)  # URLs still to process
+        
+        while remaining_urls:
             with ThreadPoolExecutor(max_workers=20) as executor:
+                # Submit fetch tasks for all remaining URLs
                 future_to_url = {
                     executor.submit(self._fetch_and_parse, url): url
-                    for url in self.urls
+                    for url in remaining_urls
                 }
+                failed_urls = set()  # URLs that failed this round
                 for future in as_completed(future_to_url):
                     url = future_to_url[future]
                     try:
@@ -206,10 +213,19 @@ class WebLoader:
                         document = future.result()
                         if document:
                             documents.append(document)
+                            url_attempts[url] = max_retries  # Mark as done
+                        else:
+                            url_attempts[url] += 1  # Increment attempt count
+                            if url_attempts[url] < max_retries:
+                                failed_urls.add(url)  # Retry next round
+                            else:
+                                logger.warning(f"Failed to load URL after {max_retries} attempts: {url}")
                     except Exception as e:
-                        logger.error(f"Error getting document for URL {url}: {e}")
-        except Exception as e:
-            logger.error(f"Error getting documents: {e}")
-
+                        url_attempts[url] += 1  # Increment attempt count on error
+                        if url_attempts[url] < max_retries:
+                            failed_urls.add(url)  # Retry next round
+                        else:
+                            logger.error(f"Error getting document for URL {url} after {max_retries} attempts: {e}")
+                remaining_urls = failed_urls  # Only retry failed URLs
         logger.info(f"All documents loaded: {len(documents)}")
         return documents

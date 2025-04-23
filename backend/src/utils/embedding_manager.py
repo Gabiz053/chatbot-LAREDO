@@ -101,11 +101,24 @@ class EmbeddingManager:
     def _reset_database(self) -> None:
         """
         Deletes the existing Chroma database at the specified `persist_directory` and
-        recreates it from scratch.
+        recreates it from scratch. Tries 3 times; if it fails, logs a warning and continues.
         """
-        if os.path.exists(self.persist_directory):
-            logger.info(f"Deleting existing database at {self.persist_directory}...")
-            shutil.rmtree(self.persist_directory)
+        import shutil
+        import os
+        from src.utils.logger_manager import logger
+        
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                if os.path.exists(self.persist_directory):
+                    logger.info(f"Deleting existing database at {self.persist_directory}...")
+                    shutil.rmtree(self.persist_directory)
+                break
+            except Exception as e:
+                logger.warning(f"Attempt {attempt+1}/{max_retries} to delete database failed: {e}")
+        else:
+            logger.warning("Could not reset the database after 3 attempts. Continuing execution.")
+        os.makedirs(self.persist_directory, exist_ok=True)
 
     def _get_chroma_collection(
         self, collection_name: str, documents: List[Document]
