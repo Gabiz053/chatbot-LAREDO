@@ -79,34 +79,41 @@ pip install -r requirements.txt
 
 ---
 
-### `init.bat`
-A script to adjust the `PYTHONPATH` if necessary. This ensures that the application can locate all modules correctly.
+## Instalación y uso con entorno virtual (.venv) y Poetry
 
----
-
-## How to Run the Project
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   ```
-
-2. Install the dependencies:
+1. Crea y activa un entorno virtual (.venv):
    
-   First, make sure you have develep for desktop(7gb): https://visualstudio.microsoft.com/es/visual-cpp-build-tools/
-   ```bash
-   pip install -r requirements.txt
+   ```sh
+   python -m venv .venv
+   .venv\Scripts\activate  # En Windows
+   # source .venv/bin/activate  # En Linux/Mac
    ```
 
-3. Adjust the `PYTHONPATH` if needed:
-   ```bash
-   init.bat
+2. Instala Poetry si no lo tienes:
+   
+   ```sh
+   pip install poetry
    ```
 
-4. Run the application:
-   ```bash
-   python main.py
+3. Instala las dependencias del proyecto dentro del entorno virtual:
+   
+   ```sh
+   poetry install
    ```
+
+4. Ejecuta el backend:
+   
+   ```sh
+   python src/wsgi.py
+   ```
+
+## Notas
+- Ya no se usa `requitements.txt`. Todas las dependencias están en `pyproject.toml`.
+- Para agregar nuevas dependencias, usa:
+  
+  ```sh
+  poetry add nombre-paquete
+  ```
 
 ---
 

@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "chatbot-laredo-backend"
+version = "0.1.0"
+description = "Backend para Chatbot Laredo"
+authors = ["Tu Nombre <tu.email@ejemplo.com>"]
+
+[tool.poetry.dependencies]
+# Core libraries
+python = ">=3.8,<4.0"
+loguru = "*"
+
+# LangChain and related packages
+langchain = "*"
+langchain-chroma = "*"
+langchain-community = "*"
+langchain-google-genai = "*"
+langchain-ollama = "*"
+langsmith = "*"
+langgraph = "*"
+
+# Web scraping and markdown processing
+bs4 = "*"
+markdownify = "*"
+
+# Environment variables
+dotenv = "*"
+
+# Natural language processing
+nltk = "*"
+rouge-score = "*"
+
+# Web framework
+flask = "*"
+flask_cors = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
