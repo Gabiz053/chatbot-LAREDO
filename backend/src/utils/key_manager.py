@@ -33,6 +33,7 @@ class KeyManager:
     def _load_keys(self) -> None:
         """
         Private method to load API keys from the .env file.
+        Raises a RuntimeError and stops execution if loading fails.
         """
         logger.info("Loading API keys from .env file...")
         try:
@@ -45,6 +46,7 @@ class KeyManager:
             logger.info("API keys successfully loaded.")
         except Exception as e:
             logger.error(f"Failed to load API keys: {e}")
+            raise RuntimeError(f"Failed to load API keys: {e}") from e
 
     def verify_key(self, key_name: str) -> bool:
         """

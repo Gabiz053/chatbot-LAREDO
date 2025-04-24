@@ -1,12 +1,16 @@
 [tool.poetry]
-name = "chatbot-laredo-backend"
-version = "0.1.0"
-description = "Backend para Chatbot Laredo"
-authors = ["Tu Nombre <tu.email@ejemplo.com>"]
+name = "LaredocMind-backend"
+version = "0.1.1"
+description = "LaredocMind: The knowledge you seek, before you ask."
+authors = ["Gabriel Gomez Garcia <ggg239@alumnos.unican.es>"]
+repository = "https://github.com/Gabiz053/chatbot-laredo"
+keywords = ["LaredocMind", "chatbot", "backend", "langchain", "flask"]
+license = "MIT"
+# package-mode = false
 
 [tool.poetry.dependencies]
 # Core libraries
-python = ">=3.8,<4.0"
+python = ">=3.13, <4.0"
 loguru = "*"
 
 # LangChain and related packages

@@ -2,16 +2,14 @@
 """
 File: logger_manager.py
 
-This file configures the logger using Loguru for the application.
-The logger is set up to print logs to the console with a specific format
-and a minimum log level of INFO.
+Configures the global logger for the application using Loguru.
+The logger outputs to the console with color and a custom format.
 """
 
 from loguru import logger
 
 import sys
-
-# logger.level("INFO", color="<white>")  # Set the color for INFO level logs
+from src.config.config_init import LOGGER_LEVEL
 
 # Remove any previous Loguru configuration (if any)
 logger.remove()
@@ -20,7 +18,7 @@ logger.remove()
 logger.add(
     sys.stdout,  # Destination: standard console
     format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{module}:{function}:{line}</cyan> - {message}",  # Log format
-    level="INFO",  # Minimum log level: DEBUG
+    level=LOGGER_LEVEL,  # Nivel de log modular desde config
     colorize=True,  # Colorize the logs
     backtrace=True,  # Show full stacktrace for errors
     diagnose=True,  # Additional diagnostics for exceptions

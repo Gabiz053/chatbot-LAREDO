@@ -4,9 +4,6 @@ File: ollama_model_manager.py
 
 This file contains the ModelManager class, responsible for managing the creation
 of language models (LLM) and embeddings using Ollama.
-
-Author: Gabriel Gomez Garcia
-Date: March 6, 2025
 """
 
 from src.utils.logger_manager import logger
@@ -15,6 +12,8 @@ from langchain_ollama import ChatOllama, OllamaEmbeddings
 
 # TODO: Uncomment the following import when the config file is available
 # from src.config.config import LLM_CONFIG, EMBEDDINGS_CONFIG
+
+# discontinued :/
 
 
 class ModelManager:
@@ -64,20 +63,10 @@ class ModelManager:
 
     @property
     def llm(self) -> ChatOllama:
-        """
-        Getter for the LLM model.
-
-        Returns:
-            ChatOllama: Instance of the language model.
-        """
+        """Getter for the LLM model."""
         return self._llm
 
     @property
     def embeddings(self) -> OllamaEmbeddings:
-        """
-        Getter for the embeddings model.
-
-        Returns:
-            OllamaEmbeddings: Instance of the embeddings model.
-        """
+        """Getter for the embeddings model."""
         return self._embeddings

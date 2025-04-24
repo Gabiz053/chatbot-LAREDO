@@ -7,7 +7,7 @@ and converting web pages into markdown documents. It uses concurrent futures
 to handle multiple URLs simultaneously and BeautifulSoup for HTML parsing.
 """
 
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, as_completed, Future
 from typing import List, Optional, Dict, Sequence
 
 import requests
@@ -29,6 +29,156 @@ class WebLoader:
             urls (List[str]): List of URLs to be fetched and converted to Markdown.
         """
         self.urls: List[str] = urls
+
+    def get_documents(self) -> List[Document]:
+        """
+        Fetches and parses the list of URLs, returning a list of Document objects.
+        Retries up to 3 times for each URL that fails.
+
+        Returns:
+            List[Document]: A list of Document objects containing the content of the parsed web pages.
+        """
+        documents: List[Document] = []
+        max_retries: int = 3
+        url_attempts: Dict[str, int] = {url: 0 for url in self.urls}
+        remaining_urls: set[str] = set(self.urls)
+
+        while remaining_urls:
+            remaining_urls = self._process_url_batch(
+                remaining_urls, url_attempts, max_retries, documents
+            )
+        logger.info(f"All documents loaded: {len(documents)}")
+        return documents
+
+    def _process_url_batch(
+        self,
+        urls: set[str],
+        url_attempts: Dict[str, int],
+        max_retries: int,
+        documents: List[Document],
+    ) -> set[str]:
+        """
+        Processes a batch of URLs concurrently using a thread pool.
+        Submits each URL to be fetched and parsed, then collects results as they complete.
+        Updates the documents list with successful loads and tracks failed URLs for retry.
+
+        Args:
+            urls (set[str]): Set of URLs to process in this batch.
+            url_attempts (Dict[str, int]): Tracks the number of attempts for each URL.
+            max_retries (int): Maximum number of retries per URL.
+            documents (List[Document]): List to append successfully loaded documents to.
+
+        Returns:
+            set[str]: Set of URLs that failed in this batch and should be retried.
+        """
+        failed_urls: set[str] = set()
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            future_to_url = self._submit_url_futures(urls, executor)
+            for future in as_completed(future_to_url):
+                url = future_to_url[future]
+                self._handle_future_result(
+                    future, url, documents, url_attempts, max_retries, failed_urls
+                )
+        return failed_urls
+
+    def _submit_url_futures(
+        self, urls: set[str], executor: ThreadPoolExecutor
+    ) -> Dict[Future[Optional[Document]], str]:
+        """
+        Submits fetch_and_parse tasks for each URL to the thread pool executor.
+        Returns a mapping from Future objects to their corresponding URLs for tracking.
+
+        Args:
+            urls (set[str]): Set of URLs to submit as tasks.
+            executor (ThreadPoolExecutor): The thread pool executor instance.
+
+        Returns:
+            Dict[Future[Optional[Document]], str]: Mapping from Future to URL.
+        """
+        return {executor.submit(self._fetch_and_parse, url): url for url in urls}
+
+    def _handle_future_result(
+        self,
+        future: Future[Optional[Document]],
+        url: str,
+        documents: List[Document],
+        url_attempts: Dict[str, int],
+        max_retries: int,
+        failed_urls: set[str],
+    ) -> None:
+        """
+        Handles the result of a completed future for a URL fetch/parse task.
+        If successful, appends the document to the documents list and marks the URL as done.
+        If failed, increments the attempt count and adds to failed_urls if retries remain.
+        Logs errors and warnings as appropriate.
+
+        Args:
+            future (Future[Optional[Document]]): The completed future object.
+            url (str): The URL associated with this future.
+            documents (List[Document]): List to append successful documents to.
+            url_attempts (Dict[str, int]): Tracks the number of attempts for each URL.
+            max_retries (int): Maximum number of retries per URL.
+            failed_urls (set[str]): Set to add failed URLs to for retrying.
+        """
+        try:
+            logger.info(f"Loading URL: {url[-30:]}")
+            document: Optional[Document] = future.result()
+            if document:
+                documents.append(document)
+                url_attempts[url] = max_retries  # Mark as done
+            else:
+                url_attempts[url] += 1
+                if url_attempts[url] < max_retries:
+                    failed_urls.add(url)
+                else:
+                    logger.warning(
+                        f"Failed to load URL after {max_retries} attempts: {url}"
+                    )
+        except Exception as e:
+            url_attempts[url] += 1
+            if url_attempts[url] < max_retries:
+                failed_urls.add(url)
+            else:
+                logger.error(
+                    f"Error getting document for URL {url} after {max_retries} attempts: {e}"
+                )
+
+    def _fetch_and_parse(self, url: str) -> Optional[Document]:
+        """
+        Fetches, parses, and converts the HTML content of a URL into a Markdown document.
+
+        Args:
+            url (str): The URL to fetch and process.
+
+        Returns:
+            Optional[Document]: A Document object if successful, None otherwise.
+        """
+        try:
+            logger.debug(f"Start fetch_and_parse for: {url}")
+            html_content: Optional[str] = self._fetch_html(url)
+            if not html_content:
+                logger.error(f"No HTML content for: {url}")
+                return None
+
+            soup: Optional[BeautifulSoup] = self._parse_html(html_content)
+            if not soup:
+                logger.error(f"No soup for: {url}")
+                return None
+
+            article_html: Optional[str] = self._extract_article(soup)
+            if not article_html:
+                logger.error(f"No article found for: {url}")
+                return None
+
+            markdown_content: str = self._convert_to_markdown(article_html)
+            metadata: Dict[str, str] = self._extract_metadata(soup, url)
+            metadata["html_content_length"] = str(len(markdown_content))
+
+            logger.debug(f"Document created for: {url}")
+            return self._create_document(markdown_content, metadata)
+        except Exception as e:
+            logger.error(f"Error fetching and parsing URL {url}: {e}")
+            return None
 
     def _fetch_html(self, url: str) -> Optional[str]:
         """
@@ -147,85 +297,3 @@ class WebLoader:
         except Exception as e:
             logger.error(f"Error creating document: {e}")
             return Document(page_content="", metadata=metadata)
-
-    def _fetch_and_parse(self, url: str) -> Optional[Document]:
-        """
-        Fetches, parses, and converts the HTML content of a URL into a Markdown document.
-
-        Args:
-            url (str): The URL to fetch and process.
-
-        Returns:
-            Optional[Document]: A Document object if successful, None otherwise.
-        """
-        try:
-            logger.debug(f"Start fetch_and_parse for: {url}")
-            html_content: Optional[str] = self._fetch_html(url)
-            if not html_content:
-                logger.error(f"No HTML content for: {url}")
-                return None
-
-            soup: Optional[BeautifulSoup] = self._parse_html(html_content)
-            if not soup:
-                logger.error(f"No soup for: {url}")
-                return None
-
-            article_html: Optional[str] = self._extract_article(soup)
-            if not article_html:
-                logger.error(f"No article found for: {url}")
-                return None
-
-            markdown_content: str = self._convert_to_markdown(article_html)
-            metadata: Dict[str, str] = self._extract_metadata(soup, url)
-            metadata["html_content_length"] = str(len(markdown_content))
-
-            logger.debug(f"Document created for: {url}")
-            return self._create_document(markdown_content, metadata)
-        except Exception as e:
-            logger.error(f"Error fetching and parsing URL {url}: {e}")
-            return None
-
-    def get_documents(self) -> List[Document]:
-        """
-        Fetches and parses the list of URLs, returning a list of Document objects.
-        Retries up to 3 times for each URL that fails.
-
-        Returns:
-            List[Document]: A list of Document objects containing the content of the parsed web pages.
-        """
-        documents: List[Document] = []
-        max_retries = 3  # Maximum number of retries per URL
-        url_attempts = {url: 0 for url in self.urls}  # Track attempts per URL
-        remaining_urls = set(self.urls)  # URLs still to process
-        
-        while remaining_urls:
-            with ThreadPoolExecutor(max_workers=20) as executor:
-                # Submit fetch tasks for all remaining URLs
-                future_to_url = {
-                    executor.submit(self._fetch_and_parse, url): url
-                    for url in remaining_urls
-                }
-                failed_urls = set()  # URLs that failed this round
-                for future in as_completed(future_to_url):
-                    url = future_to_url[future]
-                    try:
-                        logger.info(f"Loading URL: {url[-30:]}")
-                        document = future.result()
-                        if document:
-                            documents.append(document)
-                            url_attempts[url] = max_retries  # Mark as done
-                        else:
-                            url_attempts[url] += 1  # Increment attempt count
-                            if url_attempts[url] < max_retries:
-                                failed_urls.add(url)  # Retry next round
-                            else:
-                                logger.warning(f"Failed to load URL after {max_retries} attempts: {url}")
-                    except Exception as e:
-                        url_attempts[url] += 1  # Increment attempt count on error
-                        if url_attempts[url] < max_retries:
-                            failed_urls.add(url)  # Retry next round
-                        else:
-                            logger.error(f"Error getting document for URL {url} after {max_retries} attempts: {e}")
-                remaining_urls = failed_urls  # Only retry failed URLs
-        logger.info(f"All documents loaded: {len(documents)}")
-        return documents

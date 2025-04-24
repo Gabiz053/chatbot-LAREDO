@@ -11,7 +11,7 @@ import concurrent.futures
 from typing import List
 
 from langchain_core.documents import Document
-from src.utils.logger_manager import logger  # Importing the logger
+from src.utils.logger_manager import logger
 
 
 class DirectoryLoader:

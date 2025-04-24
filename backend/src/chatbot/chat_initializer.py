@@ -7,8 +7,7 @@ between the user and the chatbot, handling user input and responses.
 """
 
 from typing import Any, Dict
-from src.utils.logger_manager import logger  # Importing the logger
-from langchain_core.messages import HumanMessage
+from src.utils.logger_manager import logger
 
 
 class ChatInitializer:

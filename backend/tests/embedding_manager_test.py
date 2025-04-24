@@ -1,40 +1,51 @@
+# -*- coding: utf-8 -*-
+"""
+embedding_manager_test.py
+
+Unit test for EmbeddingManager functionality.
+- Initializes required managers and models
+- Creates example local and web documents
+- Queries embeddings and prints results
+"""
+
 from langchain_core.documents import Document
 from src.utils.embedding_manager import EmbeddingManager
 from src.utils.key_manager import KeyManager
 from src.utils.gemini_model_manager import ModelManager
 
-# Inicializar el KeyManager
+# Initialize KeyManager (handles API keys or credentials)
 key_manager = KeyManager()
 
-# Inicializar el ModelManager y obtener el modelo de embeddings
-modelos = ModelManager()
-embedding_model = modelos.embeddings  # Asegúrate de que 'embeddings' esté disponible
+# Initialize ModelManager and obtain the embedding model
+model_manager = ModelManager()
+embedding_model = model_manager.embeddings  # Ensure 'embeddings' attribute exists
 
-# Ejemplo de documentos locales y web (reemplaza con tus datos reales)
+# Example local documents (replace with real data as needed)
 local_documents = [
     Document(page_content="Contenido del manual 1"),
     Document(page_content="Contenido del manual 2"),
 ]
+
+# Example web documents (replace with real data as needed)
 web_documents = [
     Document(page_content="Artículo web 1 sobre regresión"),
     Document(page_content="Artículo web 2 sobre regresión"),
 ]
 
-# Crear una instancia de EmbeddingManager
+# Create an instance of EmbeddingManager
 embedding_manager = EmbeddingManager(
     embedding_model=embedding_model,
     local_documents=local_documents,
     web_documents=web_documents,
-    persist_directory="./src/database",  # Directorio donde se almacenará la base de datos Chroma
-    reset_database=True,  # Se reiniciará la base de datos
+    persist_directory="./src/database",  # Directory for Chroma DB persistence
 )
 
-# Consultar los embeddings
+# Query the embeddings with a sample question
 query = "What is regression?"
 results = embedding_manager.query_embeddings(
-    query=query, k=1
-)  # k=3 para obtener 3 documentos más relevantes
+    query=query, k=1  # Set k=3 to retrieve top 3 relevant documents
+)
 
-# Imprimir los resultados
+# Print the content of the most relevant documents
 for result in results:
     print(result.page_content)

@@ -101,8 +101,6 @@ class DocumentManager:
         """Process a section according to the plain_words_only flag, cleaning markdown
         symbols, images, links, tables, footnotes, and formatting text."""
         if self._plain_words_only:
-            import re
-
             text = section
             # Remove code blocks (```...``` including content)
             text = re.sub(r"```[\s\S]*?```", "", text)
@@ -146,24 +144,28 @@ class DocumentManager:
 
     def _split_local_documents(self) -> None:
         """Splits the local documents into sections, optionally as plain words only."""
-        splitter = MarkdownTextSplitter(**MARKDOWN_SPLITTER_CONFIG)
+        splitter: MarkdownTextSplitter = MarkdownTextSplitter(
+            **MARKDOWN_SPLITTER_CONFIG
+        )
         for doc in self._local_documents:
-            split_sections = splitter.split_text(doc.page_content)
+            split_sections: List[str] = splitter.split_text(doc.page_content)
             for section in split_sections:
-                processed_section = self._process_section(section)
+                processed_section: str = self._process_section(section)
                 self._local_sections.append(
-                    Document(page_content=processed_section, metadata=doc.metadata)
+                    Document(page_content=processed_section, metadata=doc.metadata)  # type: ignore
                 )
 
     def _split_web_documents(self) -> None:
         """Splits the web documents into sections, optionally as plain words only."""
-        splitter = MarkdownTextSplitter(**MARKDOWN_SPLITTER_CONFIG)
+        splitter: MarkdownTextSplitter = MarkdownTextSplitter(
+            **MARKDOWN_SPLITTER_CONFIG
+        )
         for doc in self._web_documents:
-            split_sections = splitter.split_text(doc.page_content)
+            split_sections: List[str] = splitter.split_text(doc.page_content)
             for section in split_sections:
-                processed_section = self._process_section(section)
+                processed_section: str = self._process_section(section)
                 self._web_sections.append(
-                    Document(page_content=processed_section, metadata=doc.metadata)
+                    Document(page_content=processed_section, metadata=doc.metadata)  # type: ignore
                 )
 
     @property

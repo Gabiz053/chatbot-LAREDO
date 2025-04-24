@@ -39,10 +39,11 @@ def main() -> None:
     # Configure and start the chatbot conversation
     config = {"configurable": {"thread_id": "1"}}
     chatbot = ChatInitializer(chatbot_graph=chatbot_graph, config=config)
-    
+
     # chatbot.start_conversation()
-    
+
     import asyncio
+
     asyncio.run(chatbot.start_conversation_chunks())
 
 

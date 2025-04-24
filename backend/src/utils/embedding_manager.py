@@ -8,8 +8,6 @@ organized into two collections: one for local documents and one for web document
 The class provides functionality to query these collections for relevant embeddings.
 """
 
-import os
-import shutil
 from concurrent.futures import ThreadPoolExecutor
 from typing import List, Optional, Any
 
@@ -106,18 +104,24 @@ class EmbeddingManager:
         import shutil
         import os
         from src.utils.logger_manager import logger
-        
+
         max_retries = 3
         for attempt in range(max_retries):
             try:
                 if os.path.exists(self.persist_directory):
-                    logger.info(f"Deleting existing database at {self.persist_directory}...")
+                    logger.info(
+                        f"Deleting existing database at {self.persist_directory}..."
+                    )
                     shutil.rmtree(self.persist_directory)
                 break
             except Exception as e:
-                logger.warning(f"Attempt {attempt+1}/{max_retries} to delete database failed: {e}")
+                logger.warning(
+                    f"Attempt {attempt+1}/{max_retries} to delete database failed: {e}"
+                )
         else:
-            logger.warning("Could not reset the database after 3 attempts. Continuing execution.")
+            logger.warning(
+                "Could not reset the database after 3 attempts. Continuing execution."
+            )
         os.makedirs(self.persist_directory, exist_ok=True)
 
     def _get_chroma_collection(

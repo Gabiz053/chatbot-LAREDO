@@ -23,13 +23,14 @@ from langchain_core.documents import Document
 
 from src.utils.gemini_model_manager import ModelManager
 from src.utils.embedding_manager import EmbeddingManager
-from src.utils.logger_manager import logger  # Importing the logger
+from src.utils.logger_manager import logger
 from src.config.config_chatbot import (
     SUMMARY_PROMPT,
     RECENT_MESSAGES_PROMPT,
     ANSWER_PROMPT,
     SUMMARIZATION_PROMPT,
 )
+from src.config.config_init import K_WEB_SEARCH, K_LOCAL_SEARCH
 
 
 # States for each graph to modularize
@@ -108,7 +109,9 @@ class GraphInitializer:
 
         query = " ".join(str(q) for q in question)
 
-        local_docs = self._embedding_manager.query_local_embeddings(query=query, k=4)
+        local_docs = self._embedding_manager.query_local_embeddings(
+            query=query, k=K_LOCAL_SEARCH
+        )
         return {"local_context": local_docs}  # type: ignore
 
     def search_web(self, state: SearchState) -> GenerationState:
@@ -125,7 +128,9 @@ class GraphInitializer:
 
         query = " ".join(str(q) for q in question)
 
-        web_docs = self._embedding_manager.query_web_embeddings(query=query, k=2)
+        web_docs = self._embedding_manager.query_web_embeddings(
+            query=query, k=K_WEB_SEARCH
+        )
         return {"web_context": web_docs}  # type: ignore
 
     def generate_answer(self, state: GenerationState) -> SummarizationState:
@@ -359,18 +364,18 @@ class GraphInitializer:
         # Generate and display the graph image
         # self._generate_graph_image()
 
-    def _generate_graph_image(self) -> None:
-        """
-        Generates and displays an image of the compiled graph.
-        """
-        from PIL import Image
+    # def _generate_graph_image(self) -> None:
+    #     """
+    #     Generates and displays an image of the compiled graph. (This function is currently commented out.)
+    #     """
+    #     from PIL import Image
 
-        image_path = "graph_image.png"
-        with open(image_path, "wb") as f:
-            f.write(self.graph.get_graph(xray=True).draw_mermaid_png())  # type: ignore
+    #     image_path = "graph_image.png"
+    #     with open(image_path, "wb") as f:
+    #         f.write(self.graph.get_graph(xray=True).draw_mermaid_png())  # type: ignore
 
-        img = Image.open(image_path)
-        img.show()
+    #     img = Image.open(image_path)
+    #     img.show()
 
     @property
     def graph(self) -> StateGraph:

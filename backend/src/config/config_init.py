@@ -61,3 +61,22 @@ CHROMA_DB_CONFIG: Dict[str, Any] = {
     "relevance_score_fn": None,  # Custom relevance scoring function (if used)
     "create_collection_if_not_exists": True,  # Create the collection if it doesn't exist
 }
+
+# -----------------------------
+# Logger Configuration
+# -----------------------------
+LOGGER_LEVEL = "INFO"
+
+# -------------------------
+# Web Search Configuration
+# -------------------------
+K_WEB_SEARCH = 2  # Default number of web documents to retrieve
+
+# -------------------------
+# Local Search Configuration
+# -------------------------
+K_LOCAL_SEARCH = 4  # Default number of local documents to retrieve
+
+FLASK_PORT = 20000
+
+FLASK_DEBUG = False
