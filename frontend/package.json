@@ -1,13 +1,13 @@
 {
-  "name": "chatbot-frontend",
-  "private": true,
+  "name": "laredocmind-frontend",
+  "private": false,
   "version": "0.0.1",
-  "description": "Frontend React app for Laredo Chatbot to answer all your questions.",
+  "description": "LaredocMind Frontend: The knowledge you seek, before you ask.",
   "author": "Gabriel Gomez Garcia",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/chatbot-frontend.git"
+    "url": "https://github.com/Gabiz053/LaredocMind"
   },
   "type": "module",
   "scripts": {

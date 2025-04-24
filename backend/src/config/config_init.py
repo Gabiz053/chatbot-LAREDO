@@ -20,7 +20,7 @@ MARKDOWNIFY_CONFIG: Dict[str, Any] = {
 MARKDOWN_SPLITTER_CONFIG: Dict[str, Any] = {
     "chunk_size": 1000,  # Maximum size of each chunk
     "chunk_overlap": 200,  # Overlap between chunks to maintain context
-    "keep_separator": True,  # Do not include separators in the resulting chunks
+    "keep_separator": True,  # Include separators in the resulting chunks
 }
 
 # -------------------------
@@ -68,15 +68,15 @@ CHROMA_DB_CONFIG: Dict[str, Any] = {
 LOGGER_LEVEL = "INFO"
 
 # -------------------------
-# Web Search Configuration
+# Search Configuration
 # -------------------------
 K_WEB_SEARCH = 2  # Default number of web documents to retrieve
 
-# -------------------------
-# Local Search Configuration
-# -------------------------
 K_LOCAL_SEARCH = 4  # Default number of local documents to retrieve
 
+# -------------------------
+# Flask Configuration
+# -------------------------
 FLASK_PORT = 20000
 
 FLASK_DEBUG = False

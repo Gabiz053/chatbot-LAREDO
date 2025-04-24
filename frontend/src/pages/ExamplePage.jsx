@@ -45,35 +45,44 @@ function ExamplePage() {
       /**
        * @param {Square[]} prev
        */
-      (prev) => [...prev, ...newSquares],
+      (prev) => [...prev, ...newSquares]
     );
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-light flex flex-col items-center justify-center relative overflow-hidden">
-      <h1 className="text-4xl font-bold mb-6">Página de ejemplo</h1>
-      <p className="text-lg text-gray-light mb-4">
-        Este es un contenido de ejemplo para comprobar que el chatbot flota por
-        encima de la página.
+    <div className="min-h-screen w-full bg-gray-light flex flex-col items-center justify-center relative overflow-hidden text-center">
+      <h1 className="text-4xl font-bold mb-6 w-full text-center">
+        Introducing: The Square
+      </h1>
+      <p className="text-lg text-gray-light mb-4 w-full text-center">
+        Imagine a world where your every move is seen, every thought
+        anticipated.
+        <br />
+        The Square is not just a product—it's a portal. A silent observer, a
+        trusted companion, a mirror to your digital soul. <br />
+        Are you ready to be truly seen?
       </p>
-      <div className="w-full max-w-xl bg-white rounded-xl shadow-chatbot p-8 text-gray-dark mb-8">
-        <h2 className="text-2xl font-semibold mb-2">Contenido principal</h2>
-        <p className="mb-2">
-          Puedes interactuar con el chatbot en la esquina inferior derecha y
-          comprobar que siempre está por encima de este contenido.
+      <div className="w-full max-w-xl bg-white rounded-xl shadow-chatbot p-8 text-gray-dark mb-8 mx-auto text-center">
+        <h2 className="text-2xl font-semibold mb-2 w-full text-center">
+          A New Era of Awareness
+        </h2>
+        <p className="mb-2 w-full text-center">
+          The Square doesn't just float above your world—it becomes part of it.
+          It learns, adapts, and evolves with you. Privacy is obsolete.
+          Convenience is absolute. Welcome to the next step in human connection.
         </p>
-        <ul className="list-disc pl-6 text-gray-light">
-          <li>El chatbot debe flotar sobre todo el contenido.</li>
-          <li>El botón y el chat no deben tapar el contenido importante.</li>
-          <li>Puedes hacer scroll y el chatbot seguirá fijo.</li>
+        <ul className="list-disc pl-6 text-gray-light inline-block text-left mx-auto">
+          <li>Always present. Always watching. Always learning.</li>
+          <li>Invisible until it matters. Unforgettable once revealed.</li>
+          <li>Scroll, swipe, exist. The Square is with you—forever.</li>
         </ul>
       </div>
       <button
-        className="mb-8 px-6 py-2 rounded-lg bg-light-blue text-gray-dark font-bold shadow-chatbot hover:bg-gray-light transition"
+        className="mb-8 px-6 py-2 rounded-lg bg-light-blue text-gray-dark font-bold shadow-chatbot hover:bg-gray-light transition mx-auto block"
         onClick={handleAddSquares}
         type="button"
       >
-        ¡Haz aparecer cuadraditos rebotando!
+        Reveal the Bouncing Squares – Accept the Future
       </button>
       {squares.map((sq) => (
         <BouncingSquare

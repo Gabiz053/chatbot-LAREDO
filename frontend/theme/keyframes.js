@@ -117,6 +117,18 @@ const keyframes = {
       filter: "blur(0)",
     },
   },
+
+  // BrandName letter shadow animation
+  brandNameLetter: {
+    // 0%: No shadow
+    "0%": {
+      textShadow: "none",
+    },
+    "100%": {
+      textShadow:
+        "0 0 20px theme('colors.light-blue / 0.4'), 0 0 25px theme('colors.light-blue / 0.5')",
+    },
+  },
 };
 
 export default keyframes;

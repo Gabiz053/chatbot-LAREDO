@@ -2,6 +2,7 @@
 import pinIcon from "@/assets/images/icon-pin.svg";
 import trashIcon from "@/assets/images/icon-trash.svg";
 import closeIcon from "@/assets/images/icon-close.svg";
+import BrandName from "./BrandName.jsx";
 
 // Shared button styles
 const BASE_BTN_CLASS = `flex items-center justify-center w-8 h-8 rounded-3xl hover:animate-chatbot-pulse-shadow-btn`;
@@ -37,6 +38,10 @@ function ChatbotControlButton({ className = "", icon, onClick, title }) {
 function ChatbotPanelControls({ pinned, onPin, onClear, onClose }) {
   return (
     <div className="flex items-center justify-end gap-2">
+      {/* BrandName to the far left */}
+      <BrandName />
+      <div className="flex-1" />
+      {/* Control buttons aligned right */}
       <ChatbotControlButton
         onClick={onPin}
         className={pinned ? "border-2 border-light-blue" : ""}

@@ -7,7 +7,6 @@ const animations = {
 
   "chatbot-spinner": "chatbotSpinner 1.5s linear infinite",
   "chatbot-spinner-delayed": "chatbotSpinner 1.5s linear infinite 0.75s",
-  // Use a smoother ease cubic-bezier and slightly longer duration
   "chatbot-panel-expand":
     "chatbotPanelExpand 0.3s cubic-bezier(0.25, 0.1, 0.25, 1.0)",
   "chatbot-panel-contract":
@@ -17,6 +16,8 @@ const animations = {
   "chatbot-button-contract":
     "chatbotButtonContract 0.3s cubic-bezier(0.25, 0.1, 0.25, 1.0)",
   "assistant-message": "assistantMessage 2s cubic-bezier(0.25, 0.1, 0.25, 1.0)",
+  "brand-name-letter":
+    "brandNameLetter 1s cubic-bezier(0.25, 0.1, 0.25, 1.0) both",
 };
 
 export default animations;

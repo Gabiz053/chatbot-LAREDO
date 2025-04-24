@@ -1,8 +1,42 @@
-# Laredo Chatbot Frontend
+# LaredocMind - Frontend
 
-A modern, floating chatbot UI built with React and Tailwind CSS for the LAREDO platform. This project provides a reusable, accessible chatbot widget that can be embedded in any web application.
+## Description
+LaredocMind Frontend is a modern, embeddable chat interface built with React and Tailwind CSS. It connects to the LaredocMind backend, allowing users to interact with an AI assistant that understands, remembers, and reasons over your documents. Designed for clarity and speed, the frontend provides a floating chat widget that can be integrated into any web application.
 
----
+## Installation and Quick Start
+
+**Important:** Before starting, create a `.env` file in the `frontend` folder and set the backend API URL using `.env.example` as a template. Example:
+
+```
+VITE_API_URL=http://localhost:20000
+```
+
+You can set up and run the frontend using either the quick script option, the production build option, or by following the manual steps.
+
+### Option 1: Development Server (Recommended for Development)
+
+1. Open a terminal in the `frontend` folder.
+2. Run the following command to install all dependencies:
+   ```sh
+   npm install
+   ```
+3. To start the frontend development server, run:
+   ```sh
+   npm run dev
+   ```
+4. Open your browser and go to [http://localhost:21000](http://localhost:21000) (default port).
+
+### Option 2: Production Build (Serve from dist/)
+
+1. Run the setup script to install dependencies and build the production frontend:
+   ```sh
+   setup_frontend.bat
+   ```
+2. To serve the production build, run:
+   ```sh
+   run_frontend.bat
+   ```
+3. Open your browser and go to [http://localhost:21000](http://localhost:21000) (the production build will be served on this port).
 
 ## Project Structure
 
@@ -11,121 +45,103 @@ frontend/
 ├── src/
 │   ├── app/                # Main App component
 │   ├── assets/             # Static assets (icons, images)
-│   ├── core/               # Core logic (API, hooks, chatbot state)
+│   ├── core/               # Core logic (API, chatbot state, hooks)
+│   │   ├── api/            # API communication and error handling
+│   │   ├── chatbot/        # Chatbot state, animation, storage, message utils
+│   │   └── hooks/          # Custom React hooks (autosize, focus, scroll, resize, click-outside)
 │   ├── pages/              # Example and future pages
 │   ├── types/              # Type definitions
-│   ├── ui/
-│   │   ├── components/     # UI components (chatbot, messages, spinner, etc.)
+│   ├── ui/                 # UI components and styles
+│   │   ├── components/     # Chatbot widget, message bubbles, spinner, etc.
 │   │   └── styles/         # Global and component CSS (Tailwind)
 │   └── main.jsx            # React entry point
-├── theme/                  # Tailwind theme extensions (colors, animations)
+├── theme/                  # Tailwind theme extensions (colors, animations, keyframes, shadows)
 ├── index.html              # Main HTML file
 ├── tailwind.config.js      # Tailwind CSS config
 ├── vite.config.js          # Vite config
 ├── package.json            # Project metadata and scripts
 ├── jsconfig.json           # VSCode/JS path aliases
 ├── .env.example            # Example environment variables
+├── postcss.config.js       # PostCSS config
+├── eslint.config.js        # ESLint config
 └── ...                     # Other config files
 ```
 
----
+## Detailed Folder and File Descriptions
 
-## Main Components & Their Roles
+### `src/`
+Main source code, organized by responsibility:
 
-- **App.jsx**: Root component, renders the main page and the floating chatbot widget.
-- **ChatbotWidget.jsx**: Encapsulates the chatbot portal for easy embedding.
-- **ChatbotPortal.jsx**: Manages the floating button and the chatbot panel/modal, including open/close, pinning, and focus.
-- **ChatbotPanel.jsx**: The main floating chat panel UI, including controls, messages, and input.
-- **ChatbotPanelControls.jsx**: Pin, clear, and close buttons for the chat panel.
-- **ChatbotPanelMessagesArea.jsx**: Scrollable area for chat messages, auto-scrolls to the latest.
-- **MessageList.jsx / MessageBubble.jsx**: Renders chat messages, including error and loading states.
-- **MessageInput.jsx**: Handles user input, send button, and autosizing textarea.
-- **Spinner.jsx**: Animated loading spinner for assistant responses.
-- **Hooks**: Custom React hooks for autosizing, focus, scroll, and click-outside detection.
-- **API Layer**: Handles communication with the backend chatbot API, error handling, and endpoint management.
-- **Theme**: Custom Tailwind CSS theme for colors, animations, and keyframes.
+#### `app/`
+- `App.jsx`: Root React component that renders the main page and the floating LaredocMind widget.
 
----
+#### `assets/`
+- `images/`: SVG icons and images used throughout the UI (chat, close, error, pin, send, trash).
 
-## How It Works
+#### `core/`
+- `api/`: Handles communication with the backend API, error handling, and endpoint management.
+  - `endpoints.js`: API endpoint construction and environment variable management.
+  - `errors.js`: Utility functions for API error handling.
+  - `index.js`: Main API functions for sending and streaming chat messages.
+- `chatbot/`: Chatbot state management, animation, storage, and message utilities.
+  - `useChatbotAnimation.js`: Manages open/close state and UI animation for the chat widget.
+  - `useChatbotConversation.js`: Central hook for chat state, message sending, and persistence.
+  - `useChatbotMessage.js`: Utilities for creating user/assistant message objects.
+  - `useChatbotStorage.js`: Handles localStorage for chat message history.
+- `hooks/`: Custom React hooks for UI and UX enhancements.
+  - `useAutosizeTextarea.js`: Autosizes chat input textarea.
+  - `useClickOutside.js`: Detects clicks outside a referenced element.
+  - `useFocusOnOpen.js`: Focuses input when the chat opens.
+  - `useResizablePanel.js`: Makes the chat panel resizable from the corner.
+  - `useScrollToBottom.js`: Auto-scrolls the chat to the latest message.
 
-1. **Floating Button**: A button appears in the bottom-right corner of the page. Clicking it opens the chatbot panel.
-2. **Chatbot Panel**: The panel overlays the page, showing previous messages (persisted in localStorage), a welcome message, or the chat interface.
-3. **Messaging**: Users type messages in the input area. Pressing Enter or clicking send submits the message.
-4. **API Communication**: The frontend sends the message to the backend API (`VITE_API_URL/chatbot`). The assistant's reply is displayed in the chat.
-5. **Persistence**: Chat history is saved in localStorage and restored on reload.
-6. **Controls**: Users can pin the chat (keep it open), clear the conversation, or close the panel.
-7. **Accessibility & UX**: The panel auto-focuses the input, auto-scrolls to new messages, and provides keyboard and screen reader support.
+#### `pages/`
+- `ExamplePage.jsx`: Example page to demonstrate the floating chat widget.
 
----
+#### `types/`
+- `vite-env.d.ts`: TypeScript type definitions for Vite environment variables.
 
-## Installation & Setup
+#### `ui/`
+- `components/`: Modular UI components for the chat widget.
+  - `ChatbotWidget.jsx`: Encapsulates the chat widget for easy embedding.
+  - `chatbot/`: Floating panel, button, controls, input area, messages area, welcome message, portal logic, and resize handle.
+  - `message/`: Message bubble, error, input, list, loading indicator, send button, and textarea components.
+  - `spinner/`: Spinner and spinner container for loading states.
+- `styles/`: Global and component CSS (Tailwind), including scrollbar and markdown styling.
 
-### 1. Clone the Repository
+### `theme/`
+- `animations.js`: Custom animation definitions for Tailwind.
+- `colors.js`: Custom color palette for Tailwind.
+- `keyframes.js`: Keyframes for chat UI animations.
+- `shadows.js`: Centralized box-shadow definitions.
 
-```sh
-git clone TODO
-cd chatbot-laredo/frontend
-```
+### Root Configuration Files
+- `index.html`: Main HTML file for the frontend app.
+- `tailwind.config.js`: Tailwind CSS configuration.
+- `vite.config.js`: Vite build and dev server configuration.
+- `package.json`: Project metadata, scripts, and dependencies.
+- `jsconfig.json`: VSCode/JS path aliases and project settings.
+- `.env.example`: Example environment variables for configuration.
+- `postcss.config.js`: PostCSS configuration for CSS processing.
+- `eslint.config.js`: ESLint configuration for code quality.
 
-### 2. Install Dependencies
+## Troubleshooting
 
-```sh
-npm install
-```
+### Common Issues
+- **API Not Responding**: Make sure the backend is running and the `VITE_API_URL` in your `.env` file is correct.
+- **Port Conflicts**: If the frontend fails to start, verify that port 21000 is not in use by another process.
+- **Dependency Problems**: Ensure all dependencies are installed with `npm install` and that you are using a compatible Node.js version.
+- **Build Errors**: If you encounter build errors, try deleting `node_modules` and running `npm install` again.
 
-### 3. Configure Environment Variables
+### Verifying the Frontend
+- To verify the frontend is running correctly, open your browser and go to `http://localhost:21000`. You should see the LaredocMind chat widget floating in the bottom-right corner.
 
-Copy `.env.example` to `.env` and set the backend API URL:
-
-```
-VITE_API_URL=http://localhost:20000
-```
-
-Adjust the URL to match the backend.
-
-### 4. Start the Development Server
-
-```sh
-npm run dev
-```
-
-The app will be available at [http://localhost:21000](http://localhost:21000) by default.
-
----
-
-## Customization
-
-- **Theme & Styles**: Modify `theme/colors.js`, `theme/animations.js`, and `theme/keyframes.js` for branding.
-- **API Endpoint**: Set `VITE_API_URL` in your `.env` file.
-- **Embedding**: Import and use `<ChatbotWidget />` in your app to add the chatbot.
-
----
-
-## Scripts
-
-- `npm run dev` – Start development server with hot reload.
-- `npm run build` – Build for production.
-- `npm run preview` – Preview production build.
-- `npm run lint` – Lint code with ESLint.
-- `npm run format` – Format code with Prettier.
-- `npm run clean` – Remove build output.
-
----
+### Debugging
+- Use your browser's developer tools (F12) to inspect errors, network requests, and console logs.
+- Check the terminal output for errors when running `npm run dev` or `npm run build`.
 
 ## License
 
-MIT
+This project is licensed under the MIT License. You are free to use, modify, and distribute this software, provided that the original copyright and license notice are included.
 
----
-
-## Author
-
-Gabriel Gomez Garcia
-
----
-
-## Notes
-
-- Uses React 18+, Vite, Tailwind CSS, and modern best practices.
-- For questions or issues, open an issue on GitHub.
+See the `LICENSE` file for the full license text.

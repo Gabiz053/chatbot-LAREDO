@@ -1,4 +1,4 @@
-// tailwind.config.js - Tailwind CSS configuration for Laredo Chatbot
+// tailwind.config.js - Tailwind CSS configuration for LaredocMind
 // ---------------------------------------------------------------
 import colors from "./theme/colors.js";
 import shadows from "./theme/shadows.js";
