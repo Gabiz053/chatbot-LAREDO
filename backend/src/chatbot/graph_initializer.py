@@ -8,6 +8,9 @@ and summarizing the conversation. It integrates different components like a mode
 embedding manager, and utility functions to process questions and generate appropriate responses.
 """
 
+import json
+import re
+
 from typing import List, Dict, Union, TypedDict
 
 from langgraph.graph import StateGraph, MessagesState, START, END
@@ -29,6 +32,7 @@ from src.config.config_chatbot import (
     RECENT_MESSAGES_PROMPT,
     ANSWER_PROMPT,
     SUMMARIZATION_PROMPT,
+    TRANSLATE_OPTIMIZE_QUESTION_PROMPT,
 )
 from src.config.config_init import K_WEB_SEARCH, K_LOCAL_SEARCH
 
@@ -38,10 +42,15 @@ class InputState(TypedDict):
     question: str
 
 
+class TranslateState(TypedDict):
+    question: MessageLikeRepresentation
+
+
 class SearchState(TypedDict):
     question: MessageLikeRepresentation
     local_context: List[Document]
     web_context: List[Document]
+    language: str  # Nuevo campo para el idioma
 
 
 class GenerationState(MessagesState):
@@ -50,6 +59,7 @@ class GenerationState(MessagesState):
     local_context: List[Document]  # Local context (local document search results)
     web_context: List[Document]  # Web context (web search results)
     summary: str  # Summary of previous conversation (if available)
+    language: str  # Nuevo campo para el idioma
 
 
 class SummarizationState(MessagesState):
@@ -61,6 +71,10 @@ class SummarizationState(MessagesState):
 class OutputState(TypedDict):
     answer: str
     documents: List[Document]
+
+
+class JsonState(TypedDict):
+    improved_question: MessageLikeRepresentation
 
 
 class GraphInitializer:
@@ -83,16 +97,80 @@ class GraphInitializer:
         self._embedding_manager: EmbeddingManager = embedding_manager
         self._graph: StateGraph
 
-    def parse_input(self, state: InputState) -> SearchState:
+    # --- Main flow methods ---
+    def parse_input(self, state: InputState) -> TranslateState:
         """
-        Convierte la entrada en un mensaje de usuario (`HumanMessage`) y lo encapsula en `OverallState`.
+        Converts the input into a HumanMessage and encapsulates it in TranslateState.
         """
         question_message = HumanMessage(content=state["question"])
+        return TranslateState(question=question_message)
 
+    def translate_and_optimize_question(self, state: TranslateState) -> JsonState:
+        """
+        Uses the LLM to translate and optimize the question, returning improved_question as MessageLikeRepresentation in JsonState.
+        """
+        question = state["question"].content  # type: ignore
+        prompt = TRANSLATE_OPTIMIZE_QUESTION_PROMPT.format(question=question)
+        improved_question = self._model_manager.llm.invoke(prompt).content  # type: ignore
+        improved_message = HumanMessage(content=improved_question)
+        return JsonState(improved_question=improved_message)
+
+    def extract_json(self, text: str) -> dict[str, object] | None:
+        """
+        Extracts the first JSON object found in a string and parses it.
+
+        Args:
+            text (str): The input string potentially containing a JSON object.
+        Returns:
+            dict | None: The parsed JSON object if found and valid, otherwise None.
+        """
+        match = re.search(r"\{[\s\S]*?\}", text)
+        if match:
+            json_str = match.group(0)
+            try:
+                return json.loads(json_str)
+            except Exception:
+                pass
+        return None
+
+    def parse_improved_question(self, state: JsonState) -> SearchState:
+        """
+        Parses the improved_question field from the state, extracting the language and question fields from a JSON string.
+        Handles malformed or missing JSON, falling back to the raw string if needed.
+
+        Args:
+            state (JsonState): The state containing the improved_question as a MessageLikeRepresentation.
+        Returns:
+            SearchState: The parsed question as a HumanMessage, with empty context lists.
+        """
+        improved_question_msg: MessageLikeRepresentation = state.get(
+            "improved_question", ""
+        )
+        improved_question: str = getattr(
+            improved_question_msg, "content", str(improved_question_msg)
+        )
+        parsed: dict[str, object] | None = self.extract_json(improved_question)
+
+        language: str = ""
+        improved_question_text: str = ""
+
+        # Check if the JSON was parsed successfully
+        if parsed is None:
+            logger.error(
+                f"Error parsing improved_question JSON. Raw content: {improved_question}"
+            )
+            improved_question_text = improved_question
+            language = "en"  # Default si no se puede extraer
+        else:
+            language = str(parsed.get("language", "en"))
+            improved_question_text = str(parsed.get("question", "")).strip()
+
+        improved_message: HumanMessage = HumanMessage(content=improved_question_text)
         return SearchState(
-            question=question_message,
+            question=improved_message,
             local_context=[],
             web_context=[],
+            language=language,
         )
 
     def search_local(self, state: SearchState) -> GenerationState:
@@ -105,12 +183,10 @@ class GraphInitializer:
         Returns:
             dict: A dictionary containing the local search results added to the local context.
         """
-        question = state["question"]
-
-        query = " ".join(str(q) for q in question)
+        question = state["question"].content  # type: ignore
 
         local_docs = self._embedding_manager.query_local_embeddings(
-            query=query, k=K_LOCAL_SEARCH
+            query=question, k=K_LOCAL_SEARCH  # type: ignore
         )
         return {"local_context": local_docs}  # type: ignore
 
@@ -124,12 +200,10 @@ class GraphInitializer:
         Returns:
             dict: A dictionary containing the web search results added to the web context.
         """
-        question = state["question"]
-
-        query = " ".join(str(q) for q in question)
+        question = state["question"].content  # type: ignore
 
         web_docs = self._embedding_manager.query_web_embeddings(
-            query=query, k=K_WEB_SEARCH
+            query=question, k=K_WEB_SEARCH  # type: ignore
         )
         return {"web_context": web_docs}  # type: ignore
 
@@ -146,11 +220,12 @@ class GraphInitializer:
         Returns:
             dict: A dictionary containing the generated response as a list of messages. The key 'messages' contains the response from the model.
         """
-        question = state["question"]
+        question = state["question"].content  # type: ignore
         local_context = state["local_context"]
         web_context = state["web_context"]
         summary = state.get("summary", "")
         messages = state["messages"]
+        language = state.get("language", "en")
 
         # Log to verify the context and messages before invocation
         logger.debug(f"Generating answer for question: {question}")
@@ -168,11 +243,10 @@ class GraphInitializer:
             )
 
         # Append recent messages to the system message
-        system_messages.append(
-            SystemMessage(content=RECENT_MESSAGES_PROMPT.format(messages=messages))
-        )
-
-        question_text = " ".join(str(q) for q in question)
+        if messages:
+            system_messages.append(
+                SystemMessage(content=RECENT_MESSAGES_PROMPT.format(messages=messages))
+            )
 
         # Combine local and web context
         combined_context = local_context + web_context
@@ -181,7 +255,7 @@ class GraphInitializer:
         system_messages.append(
             SystemMessage(
                 content=ANSWER_PROMPT.format(
-                    context=combined_context, question=question_text
+                    context=combined_context, question=question, language=language
                 )
             )
         )
@@ -190,12 +264,13 @@ class GraphInitializer:
         system_messages.append(HumanMessage(content="Answer the question."))
 
         # Add the user question to the message history
-        question_message = HumanMessage(content=question_text)
+        question_message = HumanMessage(content=question)
 
         logger.debug(f"System messages before invoking model: {len(system_messages)}")
 
         # Invoke the model with the constructed system messages
         response = self._model_manager.llm.invoke(system_messages)  # type: ignore
+
         return {"messages": [question_message, response], "answer": response, "documents": combined_context}  # type: ignore
 
     def summarize_conversation(
@@ -278,13 +353,29 @@ class GraphInitializer:
         """
         return OutputState(answer=state["answer"].content, documents=state["documents"])  # type: ignore
 
-    def build_graph(self) -> None:
+    # --- Private subgraphs ---
+    def _create_translate_subgraph(self) -> None:
         """
-        Builds and compiles the chatbot's state graph, integrating search, answer generation, and summarization.
+        Creates and compiles the subgraph for translation and optimization of the question.
         """
-        self._create_search_subgraph()
-        self._create_llm_subgraph()
-        self._create_main_graph()
+        logger.info("Creating subgraph for question translation/optimization.")
+        translate_graph: StateGraph = StateGraph(
+            input=TranslateState, output=SearchState
+        )
+        # Add nodes for translation and optimization
+        translate_graph.add_node("translate_and_optimize_question", self.translate_and_optimize_question)  # type: ignore
+        translate_graph.add_node("parse_improved_question", self.parse_improved_question)  # type: ignore
+
+        # Define edges for the translation subgraph
+        translate_graph.add_edge(START, "translate_and_optimize_question")
+        translate_graph.add_edge(
+            "translate_and_optimize_question", "parse_improved_question"
+        )
+        translate_graph.add_edge("parse_improved_question", END)
+
+        # Compile the translation subgraph
+        self._translate_subgraph: StateGraph = translate_graph.compile()  # type: ignore
+        logger.info("Translate/optimize subgraph created and compiled.")
 
     def _create_search_subgraph(self) -> None:
         """
@@ -345,13 +436,15 @@ class GraphInitializer:
 
         # Add nodes for parsing input, searching, invoking LLM, and parsing output
         chatbot_graph.add_node("parse_input", self.parse_input)  # type: ignore
+        chatbot_graph.add_node("translate", lambda state: self._translate_subgraph.invoke(state))  # type: ignore
         chatbot_graph.add_node("search", lambda state: self._search_subgraph.invoke(state))  # type: ignore
         chatbot_graph.add_node("llm_invocation", lambda state: self._llm_subgraph.invoke(state))  # type: ignore
         chatbot_graph.add_node("parse_output", self.parse_output)  # type: ignore
 
         # Define edges for the main chatbot graph
         chatbot_graph.add_edge(START, "parse_input")
-        chatbot_graph.add_edge("parse_input", "search")
+        chatbot_graph.add_edge("parse_input", "translate")
+        chatbot_graph.add_edge("translate", "search")
         chatbot_graph.add_edge("search", "llm_invocation")
         chatbot_graph.add_edge("llm_invocation", "parse_output")
         chatbot_graph.add_edge("parse_output", END)
@@ -377,6 +470,17 @@ class GraphInitializer:
     #     img = Image.open(image_path)
     #     img.show()
 
+    # --- Initialization of the main graph ---
+    def build_graph(self) -> None:
+        """
+        Builds and compiles the chatbot's state graph, integrating search, answer generation, and summarization.
+        """
+        self._create_translate_subgraph()
+        self._create_search_subgraph()
+        self._create_llm_subgraph()
+        self._create_main_graph()
+
+    # --- Properties ---
     @property
     def graph(self) -> StateGraph:
         """

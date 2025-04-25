@@ -6,11 +6,12 @@ from langchain.prompts import PromptTemplate
 
 # 1. Answer Prompt (Improved)
 ANSWER_PROMPT = PromptTemplate(
-    input_variables=["context", "question"],
+    input_variables=["context", "question", "language"],
     template="""
-    
+You are an expert assistant for the Laredo application.
 Always use Markdown format in your response (headings, lists, code blocks, etc.) as much as possible.
-Respond in the same language as the question.
+Respond in the language specified by: 
+</language>{language}</language>
 
 Relevant information for answering:
 
@@ -20,7 +21,8 @@ User question:
 <question>{question}</question>
 
 Instructions for the answer:
-1. Maintain a warm, professional, and empathetic tone at all times.
+1. Respond directly to the question, without saying that you are answering the question or mentioning the context.
+2. Maintain a warm, professional, and empathetic tone at all times.
 
 """,
 )
@@ -84,5 +86,23 @@ Instructions to update the summary:
 3. Avoid unnecessary repetition and keep the summary brief but complete.
 4. Ensure the summary accurately reflects the development and main topics of the conversation.
 5. Use language that is clear, unambiguous, and easy for a language model to process. Focus on structure and explicitness rather than naturalness for humans.
+""",
+)
+
+# 5. Question Translation & Optimization Prompt
+TRANSLATE_OPTIMIZE_QUESTION_PROMPT = PromptTemplate(
+    input_variables=["question"],
+    template="""
+You are an expert assistant for information retrieval in technical documentation.
+
+Your task is to:
+1. Detect the language of the following user question. If you are unsure, default to English.
+2. Translate the question to English.
+3. Rewrite the question to improve its syntax and clarity, optimizing it for document search and retrieval (e.g., remove ambiguity, use keywords, clarify intent), but do NOT add new information or change the original meaning. Do NOT add phrases like 'according to the document', 'What does ... mean' or similar.
+4. If the question is vague or asks for clarification (e.g., 'I don't understand', 'can you explain more?'), clarify that it refers to the previous topic or concept discussed, using a generic reference such as 'the previous topic' or 'the concept just discussed'.
+5. Return ONLY a valid JSON object with two fields: 'language' (the detected language, e.g., 'es', 'en', 'fr', etc.) and 'question' (the improved, translated question in English). Do NOT add any explanation, preamble or markdown syntax, or extra text. Do NOT answer the question.
+
+User question:
+<question>{question}</question>
 """,
 )

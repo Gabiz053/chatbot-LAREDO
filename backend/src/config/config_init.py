@@ -29,7 +29,7 @@ MARKDOWN_SPLITTER_CONFIG: Dict[str, Any] = {
 
 LLM_CONFIG: Dict[str, Any] = {
     "model": "gemini-2.0-flash",  # Google Gemini model
-    "temperature": 0.5,  # Lower creativity for more factual responses
+    "temperature": 0.3,  # Lower creativity for more factual responses
     "top_p": 0.85,  # Controls response diversity
     "top_k": 40,  # Filters top candidate tokens at each step
     "max_tokens": 4096,  # Maximum response length
