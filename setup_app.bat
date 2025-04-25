@@ -1,14 +1,34 @@
 @echo off
 setlocal
 
-REM Obtener la ruta del directorio actual
+REM Check if Python is installed
+where python3.13 >nul 2>nul
+if errorlevel 1 (
+    echo Python is not installed. Opening download page...
+    timeout /t 1 /nobreak >nul
+    start https://www.python.org/downloads/
+    pause
+    exit /b 1
+)
+
+REM Check if Node.js is installed
+where node >nul 2>nul
+if errorlevel 1 (
+    echo Node.js is not installed. Opening download page...
+    timeout /t 1 /nobreak >nul
+    start https://nodejs.org/
+    pause
+    exit /b 1
+)
+
+REM Get the current directory path
 set "projectRoot=%~dp0"
 cd /d "%projectRoot%"
 
-REM Abrir nueva terminal para el setup del frontend
+REM Open a new terminal for frontend setup
 start "Setup Frontend" cmd /k "cd /d %projectRoot%frontend && call setup_frontend.bat"
 
-REM Abrir nueva terminal para el setup del backend
+REM Open a new terminal for backend setup
 start "Setup Backend" cmd /k "cd /d %projectRoot%backend && call setup_backend.bat"
 
 endlocal

@@ -12,12 +12,12 @@ This solution is designed to facilitate information retrieval, analysis, and man
 ## Quick Setup & Run
 
 ### Prerequisites
-- **Node.js** (v18 or higher) and **npm** for the frontend.
 - **Python 3.13+** for the backend.
+- **Node.js** (v22 or higher) aditional tools option not needed.
 
 ### 1. Clone the repository and enter the main folder
 ```sh
-cd chatbot-laredo
+cd LaredocMind
 ```
 
 ### 2. Configure environment variables
