@@ -20,14 +20,18 @@ User question:
 <question>{question}</question>
 
 Instructions for the answer:
-1. Respond clearly, precisely, and based on the information provided in the context. (Do not say you are using the context to answer. just answer.)
-2. If the information is insufficient, kindly indicate that you do not know.
-2. If the information is insufficient, kindly indicate this and suggest how the user can get a better answer.
-3. Maintain a warm, professional, and empathetic tone at all times.
-4. Avoid repeating the question and do not include irrelevant information.
-5. You may use your own knowledge only if it is directly related to the topic.
+1. Maintain a warm, professional, and empathetic tone at all times.
+
 """,
 )
+
+# Instructions for the answer:
+# 1. Respond clearly, precisely, and based on the information provided in the context. (Do not say you are using the context to answer. just answer.)
+# 2. If the information is insufficient, kindly indicate that you do not know.
+# 2. If the information is insufficient, kindly indicate this and suggest how the user can get a better answer.
+# 3. Maintain a warm, professional, and empathetic tone at all times.
+# 4. Avoid repeating the question and do not include irrelevant information.
+# 5. You may use your own knowledge only if it is directly related to the topic.
 
 # 2. Recent Messages Prompt (Improved)
 RECENT_MESSAGES_PROMPT = PromptTemplate(
@@ -41,9 +45,8 @@ This history summarizes the key points and the development of the conversation s
 
 Guidelines for the answer:
 1. If the user asks about the last message, requests more details, or expresses confusion (e.g., "can you explain more?", "I don't understand", "please clarify"), use the recent conversation history to understand what they are referring to and provide a relevant, coherent response. If you are unsure, use last message as a reference.
-4. If the user shows doubts or confusion, use the history to clarify or revisit the topic.
-5. If a new topic arises, address it independently, without relying on the history.
-6. Keep your response aligned with the flow and tone of the previous conversation.
+2. If a new topic arises, address it independently, without relying on the history.
+3. Keep your response aligned with the flow and tone of the previous conversation.
 """,
 )
 
