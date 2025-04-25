@@ -33,7 +33,6 @@ function MessageTextarea({ value, onChange, onKeyDown, isLoading }) {
       onChange={onChange}
       onKeyDown={onKeyDown}
       placeholder="Type your message here..."
-      disabled={isLoading}
       aria-label="Chat message input"
       spellCheck={true}
       autoComplete="off"

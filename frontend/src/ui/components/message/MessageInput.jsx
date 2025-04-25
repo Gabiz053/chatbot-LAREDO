@@ -28,10 +28,15 @@ function MessageInput({
    * @param {React.KeyboardEvent<HTMLTextAreaElement>} e
    */
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey && !isLoading) {
-      // e.preventDefault();
+    if (e.key === "Enter" && !e.shiftKey) {
+      if (isLoading) {
+        e.preventDefault(); // Block send during loading
+        return;
+      }
+      e.preventDefault(); // Prevent newline
       submitNewMessage();
     }
+    // Shift+Enter always allowed for newline
   };
 
   // Animation classes for the input container
