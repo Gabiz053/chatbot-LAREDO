@@ -236,18 +236,6 @@ class GraphInitializer:
         # Prepare system messages based on the context and question
         system_messages: List[BaseMessage] = []
 
-        # If a summary exists, append it to the system message
-        if summary:
-            system_messages.append(
-                SystemMessage(content=SUMMARY_PROMPT.format(summary=summary))
-            )
-
-        # Append recent messages to the system message
-        if messages:
-            system_messages.append(
-                SystemMessage(content=RECENT_MESSAGES_PROMPT.format(messages=messages))
-            )
-
         # Combine local and web context
         combined_context = local_context + web_context
 
@@ -260,11 +248,23 @@ class GraphInitializer:
             )
         )
 
-        # Add an instruction to the model to start answering
-        system_messages.append(HumanMessage(content="Answer the question."))
+        # If a summary exists, append it to the system message
+        if summary:
+            system_messages.append(
+                SystemMessage(content=SUMMARY_PROMPT.format(summary=summary))
+            )
+
+        # Append recent messages to the system message
+        if messages:
+            system_messages.append(
+                SystemMessage(content=RECENT_MESSAGES_PROMPT.format(messages=messages))
+            )
 
         # Add the user question to the message history
         question_message = HumanMessage(content=question)
+        
+        # Add an instruction to the model to start answering
+        system_messages.append(HumanMessage(content=question))
 
         logger.debug(f"System messages before invoking model: {len(system_messages)}")
 

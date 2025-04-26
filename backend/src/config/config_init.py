@@ -29,10 +29,10 @@ MARKDOWN_SPLITTER_CONFIG: Dict[str, Any] = {
 
 LLM_CONFIG: Dict[str, Any] = {
     "model": "gemini-2.0-flash",  # Google Gemini model
-    "temperature": 0.3,  # Lower creativity for more factual responses
+    "temperature": 0.2,  # Lower creativity for more factual responses
     "top_p": 0.85,  # Controls response diversity
     "top_k": 40,  # Filters top candidate tokens at each step
-    "max_tokens": 4096,  # Maximum response length
+    "max_tokens": 2048,  # Maximum response length
     "disable_streaming": "tool_calling",  # Enable streaming, except when calling external tools
     "verbose": False,  # Disable detailed logs in production
     "max_retries": 3,  # Number of retries in case of failure
@@ -70,9 +70,9 @@ LOGGER_LEVEL = "INFO"
 # -------------------------
 # Search Configuration
 # -------------------------
-K_WEB_SEARCH = 2  # Default number of web documents to retrieve
+K_WEB_SEARCH = 1  # Default number of web documents to retrieve
 
-K_LOCAL_SEARCH = 4  # Default number of local documents to retrieve
+K_LOCAL_SEARCH = 3  # Default number of local documents to retrieve
 
 # -------------------------
 # Flask Configuration
