@@ -30,13 +30,10 @@ import {
 /**
  * useChatbotConversation - Central React hook for chatbot conversation logic.
  *
- * - Manages all chat state (messages, loading)
- * - Persists chat history to localStorage
- * - Provides two message sending modes: block (classic) and streaming (real-time)
- *
+ * @param {string} apiUrl - The base API URL for the backend.
  * @returns {ChatbotConversationApi} API for chatbot conversation state and actions
  */
-function useChatbotConversation() {
+function useChatbotConversation(apiUrl) {
   // --- Initialization and State ---
 
   // On first page load, clear chat history (but not on refresh)
@@ -78,7 +75,9 @@ function useChatbotConversation() {
    * @returns {Promise<void>}
    */
   const sendMessageBlock = useCallback(
-    /** @param {string} userInput - The user's message to send */
+    /**
+     * @param {string} userInput - The user's message to send
+     */
     async (userInput) => {
       if (isLoading) return; // Prevent concurrent sends
       const trimmedMessage =
@@ -87,7 +86,10 @@ function useChatbotConversation() {
       setMessages((prev) => [...prev, createUserMessage(trimmedMessage)]);
       setIsLoading(true);
       try {
-        const assistantReply = await fetchAssistantResponse(trimmedMessage);
+        const assistantReply = await fetchAssistantResponse(
+          trimmedMessage,
+          apiUrl,
+        );
         setMessages((prev) => [
           ...prev,
           createAssistantMessage(assistantReply),
@@ -105,7 +107,7 @@ function useChatbotConversation() {
         setIsLoading(false);
       }
     },
-    [isLoading],
+    [isLoading, apiUrl],
   );
 
   /**
@@ -116,7 +118,9 @@ function useChatbotConversation() {
    * @returns {Promise<void>}
    */
   const sendMessageStream = useCallback(
-    /** @param {string} userInput - The user's message to send */
+    /**
+     * @param {string} userInput - The user's message to send
+     */
     async (userInput) => {
       if (isLoading) return; // Prevent concurrent sends
       const trimmedMessage =
@@ -128,15 +132,18 @@ function useChatbotConversation() {
       let assistantMsg = { role: "assistant", content: "" };
       setMessages((prev) => [...prev, assistantMsg]);
       try {
-        await streamAssistantResponse(trimmedMessage, (chunk) => {
-          assistantMsg.content += chunk;
-          setMessages((prev) => {
-            // Only update the last message (the assistant's)
-            const updated = [...prev];
-            updated[updated.length - 1] = { ...assistantMsg };
-            return updated;
-          });
-        });
+        await streamAssistantResponse(
+          trimmedMessage,
+          (chunk) => {
+            assistantMsg.content += chunk;
+            setMessages((prev) => {
+              const updated = [...prev];
+              updated[updated.length - 1] = { ...assistantMsg };
+              return updated;
+            });
+          },
+          apiUrl,
+        );
       } catch {
         setMessages((prev) => [
           ...prev.slice(0, -1),
@@ -150,7 +157,7 @@ function useChatbotConversation() {
         setIsLoading(false);
       }
     },
-    [isLoading],
+    [isLoading, apiUrl],
   );
 
   // --- Return API ---

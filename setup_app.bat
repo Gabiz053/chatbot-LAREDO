@@ -32,13 +32,6 @@ if not exist "%projectRoot%backend\.env" (
     exit /b 1
 )
 
-REM Check if .env exists in frontend
-if not exist "%projectRoot%frontend\.env" (
-    echo ERROR: .env file not found in frontend folder.
-    pause
-    exit /b 1
-)
-
 REM Open a new terminal for frontend setup
 start "Setup Frontend" cmd /k "cd /d %projectRoot%frontend && call setup_frontend.bat"
 

@@ -45,7 +45,7 @@ function ExamplePage() {
       /**
        * @param {Square[]} prev
        */
-      (prev) => [...prev, ...newSquares]
+      (prev) => [...prev, ...newSquares],
     );
   };
 

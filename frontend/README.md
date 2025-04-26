@@ -1,15 +1,10 @@
 # LaredocMind - Frontend
 
 ## Description
+
 LaredocMind Frontend is a modern, embeddable chat interface built with React and Tailwind CSS. It connects to the LaredocMind backend, allowing users to interact with an AI assistant that understands, remembers, and reasons over your documents. Designed for clarity and speed, the frontend provides a floating chat widget that can be integrated into any web application.
 
 ## Installation and Quick Start
-
-**Important:** Before starting, create a `.env` file in the `frontend` folder and set the backend API URL using `.env.example` as a template. Example:
-
-```
-VITE_API_URL=http://localhost:20000
-```
 
 You can set up and run the frontend using either the quick script option, the production build option, or by following the manual steps.
 
@@ -70,15 +65,19 @@ frontend/
 ## Detailed Folder and File Descriptions
 
 ### `src/`
+
 Main source code, organized by responsibility:
 
 #### `app/`
+
 - `App.jsx`: Root React component that renders the main page and the floating LaredocMind widget.
 
 #### `assets/`
+
 - `images/`: SVG icons and images used throughout the UI (chat, close, error, pin, send, trash).
 
 #### `core/`
+
 - `api/`: Handles communication with the backend API, error handling, and endpoint management.
   - `endpoints.js`: API endpoint construction and environment variable management.
   - `errors.js`: Utility functions for API error handling.
@@ -96,12 +95,15 @@ Main source code, organized by responsibility:
   - `useScrollToBottom.js`: Auto-scrolls the chat to the latest message.
 
 #### `pages/`
+
 - `ExamplePage.jsx`: Example page to demonstrate the floating chat widget.
 
 #### `types/`
+
 - `vite-env.d.ts`: TypeScript type definitions for Vite environment variables.
 
 #### `ui/`
+
 - `components/`: Modular UI components for the chat widget.
   - `ChatbotWidget.jsx`: Encapsulates the chat widget for easy embedding.
   - `chatbot/`: Floating panel, button, controls, input area, messages area, welcome message, portal logic, and resize handle.
@@ -110,12 +112,14 @@ Main source code, organized by responsibility:
 - `styles/`: Global and component CSS (Tailwind), including scrollbar and markdown styling.
 
 ### `theme/`
+
 - `animations.js`: Custom animation definitions for Tailwind.
 - `colors.js`: Custom color palette for Tailwind.
 - `keyframes.js`: Keyframes for chat UI animations.
 - `shadows.js`: Centralized box-shadow definitions.
 
 ### Root Configuration Files
+
 - `index.html`: Main HTML file for the frontend app.
 - `tailwind.config.js`: Tailwind CSS configuration.
 - `vite.config.js`: Vite build and dev server configuration.
@@ -128,15 +132,18 @@ Main source code, organized by responsibility:
 ## Troubleshooting
 
 ### Common Issues
-- **API Not Responding**: Make sure the backend is running and the `VITE_API_URL` in your `.env` file is correct.
+
+- **API Not Responding**: Make sure the backend is running.
 - **Port Conflicts**: If the frontend fails to start, verify that port 21000 is not in use by another process.
 - **Dependency Problems**: Ensure all dependencies are installed with `npm install` and that you are using a compatible Node.js version.
 - **Build Errors**: If you encounter build errors, try deleting `node_modules` and running `npm install` again.
 
 ### Verifying the Frontend
+
 - To verify the frontend is running correctly, open your browser and go to `http://localhost:21000`. You should see the LaredocMind chat widget floating in the bottom-right corner.
 
 ### Debugging
+
 - Use your browser's developer tools (F12) to inspect errors, network requests, and console logs.
 - Check the terminal output for errors when running `npm run dev` or `npm run build`.
 

@@ -9,19 +9,19 @@ import {
 
 /**
  * Sends a message to the chatbot backend and returns the assistant's response.
- *
  * @param {string} userMessage - The user's message to send.
+ * @param {string} apiUrl - The base API URL.
  * @returns {Promise<string>} The assistant's response.
  * @throws {Error} If the API call fails or the response is invalid.
  */
-export const fetchAssistantResponse = async (userMessage) => {
+export const fetchAssistantResponse = async (userMessage, apiUrl) => {
   // Validate input
   if (typeof userMessage !== "string" || !userMessage.trim()) {
     throw new Error("User message must be a non-empty string.");
   }
 
   // Prepare endpoint and payload
-  const endpoint = getChatbotEndpoint("/chatbot");
+  const endpoint = getChatbotEndpoint("/chatbot", apiUrl);
   const payload = JSON.stringify({ question: userMessage.trim() });
 
   let response = undefined;
@@ -65,32 +65,26 @@ export const fetchAssistantResponse = async (userMessage) => {
 
 /**
  * Streams the assistant's response in real time using a custom chunk delimiter.
- *
- * The backend sends each chunk as:
- *   <6 chars><content><2 chars><END_OF_CHUNK>
- *   (e.g., 'data: Hello!\n\n<END_OF_CHUNK>')
- *
- * This function:
- *   - Reads the response stream chunk by chunk
- *   - Splits the buffer by the delimiter <END_OF_CHUNK>
- *   - For each complete chunk, removes the first 6 and last 2 characters (legacy format)
- *   - Calls onChunk(chunk) for each processed chunk
- *   - Handles incomplete chunks by keeping them in the buffer for the next iteration
- *
  * @param {string} userMessage - The user's message to send to the chatbot.
  * @param {(chunk: string) => void} onChunk - Callback for each processed chunk of the assistant's response.
  * @param {AbortSignal} [signal] - Optional AbortSignal to allow cancellation.
+ * @param {string} apiUrl - The base API URL.
  * @returns {Promise<void>} Resolves when the stream ends or is aborted.
  * @throws {Error} If the network or stream fails.
  */
-export const streamAssistantResponse = async (userMessage, onChunk, signal) => {
+export const streamAssistantResponse = async (
+  userMessage,
+  onChunk,
+  apiUrl,
+  signal,
+) => {
   // Validate input
   if (typeof userMessage !== "string" || !userMessage.trim()) {
     throw new Error("User message must be a non-empty string.");
   }
 
   // Build the streaming endpoint URL and payload
-  const endpoint = getChatbotEndpoint("/chatbot/stream");
+  const endpoint = getChatbotEndpoint("/chatbot/stream", apiUrl);
   const payload = JSON.stringify({ question: userMessage.trim() });
 
   let response;

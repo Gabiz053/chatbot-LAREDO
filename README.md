@@ -21,7 +21,7 @@ cd LaredocMind
 ```
 
 ### 2. Configure environment variables
-- Copy `.env.example` to `.env` in both the `backend` and `frontend` directories and fill in the required values.
+- Copy `.env.example` to `.env` in the `backend` directory and fill in the required values.
 
 ### 3. Automatic installation (recommended)
 Run the following script from the project root to install dependencies and set up both environments:

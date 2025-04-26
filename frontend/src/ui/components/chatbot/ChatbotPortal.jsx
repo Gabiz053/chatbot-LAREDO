@@ -23,8 +23,10 @@ const USE_STREAM = true;
  * - Shows the chatbot panel when open.
  * - Handles pinning, focus, and click-outside-to-close.
  * - All animation state is managed by useChatbotButtonAnimation.
+ *
+ * @param {{ apiUrl: string }} props
  */
-function ChatbotPortal() {
+function ChatbotPortal({ apiUrl }) {
   // Animation and panel state (from custom hook)
   const {
     isOpen,
@@ -50,13 +52,13 @@ function ChatbotPortal() {
     sendMessageBlock,
     sendMessageStream,
     clearChat,
-  } = useChatbotConversation();
+  } = useChatbotConversation(apiUrl);
 
   // Close panel on outside click (unless pinned or animating out)
   useClickOutside(
     containerRef,
     handlePanelClose,
-    isOpen && !pinned && !isPanelAnimatingOut
+    isOpen && !pinned && !isPanelAnimatingOut,
   );
   // Focus input when panel opens
   useFocusOnOpen(isOpen && !isPanelAnimatingOut, inputRef);
