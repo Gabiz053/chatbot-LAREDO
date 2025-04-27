@@ -14,3 +14,4 @@ echo Setup and build complete. You can start the frontend.
 echo.
 echo Press ENTER to exit...
 pause >nul
+exit

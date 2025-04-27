@@ -33,3 +33,4 @@ echo Setup complete. You can now start the backend with run_backend.bat
 echo.
 echo Press ENTER to exit...
 pause >nul
+exit
