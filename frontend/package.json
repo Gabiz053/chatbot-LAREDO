@@ -19,18 +19,12 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "dotenv": "latest",
-    "eventsource-parser": "latest",
-    "immer": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-markdown": "latest",
-    "remark-gfm": "^4.0.1",
-    "use-immer": "latest"
+    "react-markdown": "latest"
   },
   "devDependencies": {
     "@eslint/js": "latest",
-    "@tailwindcss/vite": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
@@ -42,7 +36,6 @@
     "globals": "latest",
     "postcss": "latest",
     "prettier": "latest",
-    "rimraf": "latest",
     "tailwindcss": "latest",
     "vite": "latest"
   }

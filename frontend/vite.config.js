@@ -1,10 +1,8 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { fileURLToPath } from "url";
-import * as path from "path";
-
-// Get the current directory name for ESM compatibility
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import path from "path";
+import tailwindcss from "tailwindcss";
+import autoprefixer from "autoprefixer";
 
 export default defineConfig({
   // Dev server configuration
@@ -23,4 +21,10 @@ export default defineConfig({
     react(),
     // Add more plugins here
   ],
+
+  css: {
+    postcss: {
+      plugins: [tailwindcss, autoprefixer],
+    },
+  },
 });

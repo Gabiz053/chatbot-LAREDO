@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+
+    /* Spinner Styles */
+    .spinner-child {
+        @apply absolute h-full w-full rounded-full bg-blue-200 opacity-0;
+    }
+
+    /*
+     * Markdown Styles for Chat Bubbles
+     * --------------------------------
+     * These rules ensure markdown content is readable, well-spaced, and visually consistent in the chat UI.
+     */
+
+    /* Main container for markdown content in chat bubbles */
+    .markdown-container {
+        @apply mb-5;
+    }
+
+    /* Remove bottom margin from the last child to avoid extra space */
+    .markdown-container> :last-child {
+        @apply mb-0;
+    }
+
+    /* Paragraphs inside markdown: spaced for readability */
+    .markdown-container p {
+        @apply mb-5;
+    }
+
+    /* Headings (h1-h6): bold and spaced */
+    .markdown-container h1,
+    .markdown-container h2,
+    .markdown-container h3,
+    .markdown-container h4,
+    .markdown-container h5,
+    .markdown-container h6 {
+        @apply font-bold mb-5;
+    }
+
+    /* Lists: indented and spaced */
+    .markdown-container ol,
+    .markdown-container ul {
+        @apply mx-0 mt-0 mb-5 pl-8;
+    }
+
+    /* Ordered lists: decimal numbers */
+    .markdown-container ol {
+        @apply list-decimal;
+    }
+
+    /* Unordered lists: bullet points */
+    .markdown-container ul {
+        @apply list-disc;
+    }
+
+    /* List items: spaced apart */
+    .markdown-container li {
+        @apply mb-3;
+    }
+
+    /* Last list item: no extra margin */
+    .markdown-container li:last-child {
+        @apply mb-0;
+    }
+
+    /*
+     * Code blocks and inline code:
+     * - pre-wrap: allow long lines to wrap
+     * - break-word: break long words if needed
+     * - overflow-x: auto for horizontal scroll if still too long
+     */
+    .markdown-container pre,
+    .markdown-container code {
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-x: auto;
+    }
+
+    /* Custom Scrollbar (solo para el widget) */
+    .chatbot-widget ::-webkit-scrollbar {
+    @apply h-4 w-2;
+    }
+    .chatbot-widget ::-webkit-scrollbar-track {
+    @apply bg-transparent rounded-3xl;
+    }
+    .chatbot-widget ::-webkit-scrollbar-thumb {
+    @apply bg-light-blue/30 rounded-3xl;
+  }
+}
