@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 /**
  * @typedef {Object} Square
@@ -11,14 +11,13 @@ import React, { useState } from "react";
 function getRandomColor() {
   // Pastel colors
   const colors = [
-    "#A7C7E7", // pastel blue
-    "#B5EAD7", // pastel green
-    "#FFDAC1", // pastel orange
-    "#FFB7B2", // pastel pink
-    "#E2F0CB", // pastel lime
-    "#C7CEEA", // pastel purple
-    "#FFFACD", // pastel yellow
-    "#ECECEC", // pastel gray
+  "#BCDFFB", // pastel blue
+  "#C9F5E1", // pastel green
+  "#FFE8D1", // pastel orange
+  "#FFD4D0", // pastel pink
+  "#E9F7D0", // pastel lime
+  "#D8DFF9", // pastel purple
+  "#FFFDE5", // pastel yellow
   ];
   return colors[Math.floor(Math.random() * colors.length)];
 }
@@ -49,12 +48,55 @@ function ExamplePage() {
     );
   };
 
+  // Dark mode state
+  const [darkMode, setDarkMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("theme");
+      if (stored === "light") return false;
+      return true; // Siempre inicia en oscuro si no hay preferencia
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    const html = document.documentElement;
+    if (darkMode) {
+      html.classList.remove("light");
+      localStorage.setItem("theme", "dark");
+    } else {
+      html.classList.add("light");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
+
   return (
-    <div className="min-h-screen w-full bg-gray-light flex flex-col items-center justify-center relative overflow-hidden text-center">
-      <h1 className="text-4xl font-bold mb-6 w-full text-center">
+    <div
+      className={
+        `min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden text-center transition-colors ` +
+        (darkMode
+          ? 'bg-dark-gray text-chat-white'
+          : 'bg-white text-dark-gray')
+      }
+    >
+      <button
+        className={
+          `absolute top-4 right-4 px-4 py-2 rounded-lg font-bold shadow-chatbot transition z-50 ` +
+          (darkMode
+            ? 'bg-light-blue text-dark-gray hover:bg-light-blue/80'
+            : 'bg-dark-gray text-light-blue hover:bg-gray/20')
+        }
+        onClick={() => setDarkMode((d) => !d)}
+        type="button"
+      >
+        {darkMode ? "Modo claro" : "Modo oscuro"}
+      </button>
+      <h1 className="text-4xl font-bold mb-6 w-full text-center text-light-blue">
         Introducing: The Square
       </h1>
-      <p className="text-lg text-gray-light mb-4 w-full text-center">
+      <p className={
+        `text-lg mb-4 w-full text-center ` +
+        (darkMode ? 'text-chat-white' : 'text-dark-gray')
+      }>
         Imagine a world where your every move is seen, every thought
         anticipated.
         <br />
@@ -62,23 +104,39 @@ function ExamplePage() {
         trusted companion, a mirror to your digital soul. <br />
         Are you ready to be truly seen?
       </p>
-      <div className="w-full max-w-xl bg-white rounded-xl shadow-chatbot p-8 text-gray-dark mb-8 mx-auto text-center">
-        <h2 className="text-2xl font-semibold mb-2 w-full text-center">
+      <div className={
+        `w-full max-w-xl rounded-xl shadow-chatbot p-8 mb-8 mx-auto text-center backdrop-blur-md ` +
+        (darkMode
+          ? 'bg-gray/80 text-chat-white'
+          : 'bg-white text-dark-gray border border-gray/30')
+      }>
+        <h2 className="text-2xl font-semibold mb-2 w-full text-center text-light-blue">
           A New Era of Awareness
         </h2>
-        <p className="mb-2 w-full text-center">
+        <p className={
+          `mb-2 w-full text-center ` +
+          (darkMode ? 'text-chat-white' : 'text-dark-gray')
+        }>
           The Square doesn't just float above your world—it becomes part of it.
           It learns, adapts, and evolves with you. Privacy is obsolete.
           Convenience is absolute. Welcome to the next step in human connection.
         </p>
-        <ul className="list-disc pl-6 text-gray-light inline-block text-left mx-auto">
+        <ul className={
+          `list-disc pl-6 inline-block text-left mx-auto ` +
+          (darkMode ? 'text-chat-white' : 'text-gray')
+        }>
           <li>Always present. Always watching. Always learning.</li>
           <li>Invisible until it matters. Unforgettable once revealed.</li>
           <li>Scroll, swipe, exist. The Square is with you—forever.</li>
         </ul>
       </div>
       <button
-        className="mb-8 px-6 py-2 rounded-lg bg-light-blue text-gray-dark font-bold shadow-chatbot hover:bg-gray-light transition mx-auto block"
+        className={
+          `mb-8 px-6 py-2 rounded-lg font-bold shadow-chatbot transition mx-auto block ` +
+          (darkMode
+            ? 'bg-light-blue text-dark-gray hover:bg-light-blue/80'
+            : 'bg-dark-gray text-light-blue hover:bg-gray/20')
+        }
         onClick={handleAddSquares}
         type="button"
       >
@@ -103,8 +161,8 @@ function BouncingSquare({ color, initialTop, initialLeft }) {
   const [pos, setPos] = useState({
     top: initialTop,
     left: initialLeft,
-    vTop: (Math.random() - 0.5) * 1.5,
-    vLeft: (Math.random() - 0.5) * 1.5,
+    vTop: (Math.random() - 0.5) * 0.4, // Más lento
+    vLeft: (Math.random() - 0.5) * 0.4, // Más lento
   });
 
   let frame;
@@ -151,7 +209,7 @@ function BouncingSquare({ color, initialTop, initialLeft }) {
         height: 40,
         background: color,
         borderRadius: 8,
-        boxShadow: "0 6px 12px rgba(0,0,0,0.25), 0 4px 8px rgba(0,0,0,0.15)", // Igual que shadow-chatbot
+        boxShadow: "0 6px 12px rgba(0,0,0,0.25), 0 4px 8px rgba(0,0,0,0.15)",
         zIndex: 30,
         pointerEvents: "none",
         transition: "box-shadow 0.2s",
