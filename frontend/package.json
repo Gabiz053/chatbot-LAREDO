@@ -21,7 +21,8 @@
   "dependencies": {
     "react": "latest",
     "react-dom": "latest",
-    "react-markdown": "latest"
+    "react-markdown": "latest",
+    "serve":"latest"
   },
   "devDependencies": {
     "@eslint/js": "latest",
