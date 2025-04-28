@@ -75,3 +75,4 @@ Icon?
 config/*.bak
 
 *.package-lock.json
+.package-lock.json 
