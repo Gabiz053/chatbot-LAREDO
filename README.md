@@ -55,8 +55,7 @@ chatbot-laredo/
 
 ## Basic Usage
 1. Access the web interface at [http://localhost:22000](http://localhost:22000) (or your configured port).
-2. Interact with the chatbot, upload documents, and explore available models.
-3. Check the documentation in `backend/docs/` for user guides and advanced details.
+2. Interact with the chatbot!
 
 ---
 
