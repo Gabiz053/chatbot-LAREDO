@@ -2,7 +2,7 @@
 setlocal
 
 REM Check if Python is installed
-where python3.13 >nul 2>nul
+where python >nul 2>nul
 if errorlevel 1 (
     echo Python is not installed. Opening download page...
     timeout /t 1 /nobreak >nul
