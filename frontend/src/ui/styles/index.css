@@ -1,12 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @layer base {
+
   /* Global Styles */
   body,
   html,
   #root {
-    @apply h-full w-full bg-gray;
+    @apply h-full w-full;
   }
 }
