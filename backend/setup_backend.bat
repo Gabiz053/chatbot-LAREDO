@@ -1,12 +1,20 @@
 @echo off
 REM === LaredocMind - Backend Setup Script ===
 
+:venv_check
 echo [1/4] Checking for virtual environment...
 if not exist ".venv" (
     echo Creating virtual environment...
     python -m venv .venv
+)
+
+REM Check if activate script exists
+if not exist ".venv\Scripts\activate" (
+    echo ERROR: Activation script not found. Deleting and retrying...
+    rmdir /s /q .venv
+    goto venv_check
 ) else (
-    echo Virtual environment already exists.
+    echo Virtual environment is ready.
 )
 
 echo.

@@ -14,6 +14,7 @@ REM 3. Set PYTHONPATH to the src directory
 set PYTHONPATH=%CD%
 
 REM 4. Start the backend server
+echo Starting backend server...
 python src/wsgi.py
 
 REM The backend server will keep running in this window

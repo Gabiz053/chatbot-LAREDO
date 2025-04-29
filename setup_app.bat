@@ -13,8 +13,10 @@ where node >nul 2>nul
 if errorlevel 1 goto install_node
 
 REM Check VC++ Redistributable
-winget list --id Microsoft.VCRedist.2015+.x64 >nul 2>nul
+winget list --id Microsoft.VCRedist.2015+.x64 > winget_vc.txt 2>nul
+findstr /I "Microsoft.VCRedist.2015" winget_vc.txt >nul
 if errorlevel 1 goto install_vcredist
+del winget_vc.txt
 
 REM Check .env
 if not exist "%~dp0backend\.env" (
