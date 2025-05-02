@@ -5,24 +5,6 @@
 import { useEffect, useCallback } from "react";
 
 /**
- * Checks if a click event occurred outside the referenced element.
- * Calls the handler if so.
- *
- * @param {React.RefObject<HTMLElement>} ref - Ref to the element
- * @param {() => void} handler - Handler to call on outside click
- * @param {MouseEvent} event - Mouse event
- */
-function handleOutsideClick(ref, handler, event) {
-  if (
-    ref.current &&
-    event.target instanceof Node &&
-    !ref.current.contains(event.target)
-  ) {
-    handler();
-  }
-}
-
-/**
  * useClickOutside - Custom React hook
  *
  * Calls the handler when a click outside the referenced element occurs, if enabled.
@@ -32,20 +14,35 @@ function handleOutsideClick(ref, handler, event) {
  * @param {boolean} enabled - Whether the outside click detection is active
  */
 function useClickOutside(ref, handler, enabled) {
-  // Memoize the event handler to avoid unnecessary re-registrations
+  // Memoize the event handler to avoid unnecessary re-renders
   const memoizedHandler = useCallback(
-    /**
-     * Handles the mousedown event and calls the handler if the click is outside the ref element.
-     * @param {MouseEvent} event
-     */
-    (event) => handleOutsideClick(ref, handler, event),
-    [ref, handler],
+    (event) => {
+      // Get the event path (supports Shadow DOM)
+      const path = event.composedPath ? event.composedPath() : [];
+      // If any node in the path has the .chatbot-widget class, do not trigger handler
+      if (
+        path.some(
+          (node) => node.classList && node.classList.contains("chatbot-widget")
+        )
+      )
+        return;
+      // If the ref still exists and contains the event target, do not trigger handler
+      if (ref.current && ref.current.contains(event.target)) return;
+      // Otherwise, call the handler (outside click detected)
+      handler();
+    },
+    [ref, handler]
   );
 
   useEffect(() => {
+    // Only add the event listener if enabled
     if (!enabled) return;
-    document.addEventListener("mousedown", memoizedHandler);
-    return () => document.removeEventListener("mousedown", memoizedHandler);
+    // Listen for mousedown events in the capture phase
+    window.addEventListener("mousedown", memoizedHandler, true); // capture phase
+    return () => {
+      // Clean up the event listener on unmount or when disabled
+      window.removeEventListener("mousedown", memoizedHandler, true);
+    };
   }, [enabled, memoizedHandler]);
 }
 

@@ -17,7 +17,7 @@ const SHADOW_BUTTON = "bg-dark-gray/80 shadow-chatbot";
  * @param {string} props.title - Tooltip text for accessibility and hover
  * @param {string} [props.ariaLabel] - Optional aria-label for screen readers (defaults to title)
  *
- * @returns {JSX.Element} A styled button with an icon, accessible and keyboard-friendly
+ * @returns {React.ReactElement} A styled button with an icon, accessible and keyboard-friendly
  */
 function ChatbotButton({ className = "", icon, onClick, title, ariaLabel }) {
   // Render a button with icon and accessibility features

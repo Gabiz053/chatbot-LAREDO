@@ -14,7 +14,7 @@ import MessageInput from "@/ui/components/message/MessageInput.jsx";
  * @param {boolean} props.isLoading - Indicates if the chatbot is processing a response
  * @param {function(string):void} props.sendMessage - Function to send the written message
  *
- * @returns {JSX.Element} The chatbot input area
+ * @returns {React.ReactElement} The chatbot input area
  */
 function ChatbotPanelInputArea({ isLoading, sendMessage }) {
   // Local state for the current message

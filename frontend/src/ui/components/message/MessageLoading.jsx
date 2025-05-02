@@ -10,7 +10,7 @@ import SpinnerContainer from "@/ui/components/spinner/SpinnerContainer.jsx";
  * Displays a spinner and a loading message while the assistant is generating a response.
  * Used in the chat message list during loading state.
  *
- * @returns {JSX.Element}
+ * @returns {React.ReactElement}
  */
 function MessageLoading() {
   return (

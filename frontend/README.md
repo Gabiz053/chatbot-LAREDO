@@ -1,4 +1,38 @@
-# LaredocMind - Frontend
+# LaredocMind Frontend
+
+## Overview
+
+This repository is the main development workspace for the LaredocMind embeddable chatbot widget. Here, the widget is improved, tested, and built for distribution as an npm package.
+
+**If you want to use the chatbot in your own React project, simply install the npm package and import the widget.**
+
+---
+
+## Installation in Your Project
+
+Install the npm package:
+
+```sh
+npm install laredocmind
+```
+
+Then, in your React app:
+
+```jsx
+import { ChatbotWidget } from "laredocmind";
+
+function App() {
+  return (
+    <ChatbotWidget apiUrl="http://localhost:20000" />
+  );
+}
+```
+
+---
+
+## About this Repository
+
+This repository contains the source code, development environment, and example/demo for the LaredocMind chatbot widget. If you want to contribute, test, or improve the widget, you can run it locally as described below.
 
 ## Description
 

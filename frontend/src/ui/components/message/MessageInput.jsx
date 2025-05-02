@@ -14,7 +14,7 @@ import MessageSendButton from "./MessageSendButton.jsx";
  * @param {boolean} props.isLoading - Whether the assistant is generating a response
  * @param {(value: string) => void} props.setNewMessage - Updates the input value
  * @param {() => void} props.submitNewMessage - Submits the message
- * @returns {JSX.Element}
+ * @returns {React.ReactElement}
  */
 function MessageInput({
   newMessage,

@@ -10,13 +10,13 @@ import sendIcon from "@/assets/images/icon-send.svg";
  * @param {Object} props - Component props
  * @param {() => void} props.onClick - Function to call when the button is clicked
  * @param {boolean} [props.disabled] - If true, disables the button
- * @returns {JSX.Element}
+ * @returns {React.ReactElement}
  */
 function MessageSendButton({ onClick, disabled }) {
   return (
     <button
       type="button"
-      className="absolute top-1/2 -translate-y-1/2 right-5 disabled:opacity-50 flex items-center"
+      className="absolute inset-y-0 my-auto right-5 disabled:opacity-50 flex items-center"
       onClick={onClick}
       disabled={disabled}
       aria-label="Send message"

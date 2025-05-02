@@ -44,17 +44,19 @@ function ChatbotPanelControls({ pinned, onPin, onClear, onClose }) {
       {/* Control buttons aligned right */}
       <ChatbotControlButton
         onClick={onPin}
-        className={pinned ? "border-2 border-light-blue" : ""}
+        className={`chatbot-pin-btn${pinned ? " pinned" : ""}`}
         icon={pinIcon}
         title={pinned ? "Unpin chat" : "Pin chat"}
       />
       <ChatbotControlButton
         onClick={onClear}
+        className=""
         icon={trashIcon}
         title="Clear chat"
       />
       <ChatbotControlButton
         onClick={onClose}
+        className=""
         icon={closeIcon}
         title="Close chat"
       />

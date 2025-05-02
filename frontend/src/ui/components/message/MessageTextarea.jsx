@@ -17,7 +17,7 @@ import useAutosizeTextarea from "@/core/hooks/useAutosizeTextarea.js";
  * @param {(e: React.KeyboardEvent<HTMLTextAreaElement>) => void} props.onKeyDown - Handler for keydown events (e.g., Enter to send)
  * @param {React.RefObject<HTMLTextAreaElement>} [props.inputRef] - Optional ref for external focus control
  * @param {boolean} [props.isLoading] - If true, disables the textarea
- * @returns {JSX.Element}
+ * @returns {React.ReactElement}
  */
 function MessageTextarea({ value, onChange, onKeyDown, isLoading }) {
   // Custom hook to autosize the textarea as the user types

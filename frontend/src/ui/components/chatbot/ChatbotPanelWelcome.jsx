@@ -6,7 +6,7 @@
  */
 function ChatbotPanelWelcome() {
   return (
-    <div className="flex-1 overflow-auto text-light-blue text-xl font-light space-y-2">
+    <div className="flex-1 overflow-auto text-light-blue text-xl font-light space-y-2 text-left">
       <br></br>
       <p aria-label="Hello" role="img">
         Welcome to the next generation of assistance.

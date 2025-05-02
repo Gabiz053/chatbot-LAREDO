@@ -15,7 +15,7 @@ import useAutoScroll from "@/core/hooks/useScrollToBottom.js";
  * @param {Object} props
  * @param {Array<Object>} props.messages - Array of message objects to display.
  * @param {boolean} props.isLoading - Whether a message is currently being sent/received.
- * @returns {JSX.Element}
+ * @returns {React.ReactElement}
  */
 function ChatbotPanelMessagesArea({ messages, isLoading }) {
   // Detect the last message object (for scroll logic)

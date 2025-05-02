@@ -9,7 +9,7 @@ import errorIcon from "@/assets/images/icon-error.svg";
  *
  * Displays an error icon and a message when the assistant fails to respond.
  *
- * @returns {JSX.Element}
+ * @returns {React.ReactElement}
  */
 function MessageError() {
   return (

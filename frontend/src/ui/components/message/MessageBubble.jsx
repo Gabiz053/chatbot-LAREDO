@@ -22,7 +22,7 @@ const COMMON_STYLE = "text-chat-white break-words px-5 py-3 rounded-3xl";
  * @param {string} props.content - The message content
  * @param {boolean} props.error - Whether the message is an error
  * @param {boolean} props.animate - Whether to apply the fade animation
- * @returns {JSX.Element}
+ * @returns {React.ReactElement}
  */
 const MessageBubble = ({ role, content, error, animate }) => {
   if (error) return <MessageError />;
@@ -31,8 +31,9 @@ const MessageBubble = ({ role, content, error, animate }) => {
     return (
       <div
         className={`${SHADOW_CHAT} ${COMMON_STYLE} max-w-[70%] w-fit ml-auto`}
+        style={{ display: 'flex', justifyContent: 'flex-end' }}
       >
-        <span className="block whitespace-pre-line">{content}</span>
+        <span className="block whitespace-pre-line text-left w-full" style={{ textAlign: 'left' }}>{content}</span>
       </div>
     );
   }
@@ -40,9 +41,9 @@ const MessageBubble = ({ role, content, error, animate }) => {
   // assistant
   return (
     <div
-      className={`${COMMON_STYLE}${animate ? " animate-assistant-message" : ""}`}
+      className={`markdown-container ${COMMON_STYLE}${animate ? " animate-assistant-message" : ""} text-left`}
     >
-      <Markdown className="markdown-container">{content}</Markdown>
+      <Markdown>{content}</Markdown>
     </div>
   );
 };

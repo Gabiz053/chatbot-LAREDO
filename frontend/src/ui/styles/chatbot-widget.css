@@ -250,4 +250,13 @@
     .chatbot-widget ::-webkit-scrollbar-thumb {
         @apply bg-light-blue/30 rounded-3xl;
     }
+
+    .chatbot-pin-btn {
+        border-width: 0px !important;
+        border-style: solid !important;
+    }
+    .chatbot-pin-btn.pinned {
+        border-width: 2px !important;
+        border-color: rgb(191 219 254) !important;
+    }
 }

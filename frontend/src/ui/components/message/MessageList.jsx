@@ -25,7 +25,7 @@ import MessageLoading from "./MessageLoading.jsx";
  * @param {{ messages: Message[], isLoading: boolean }} props
  *   messages: Array of chat messages (user and assistant)
  *   isLoading: True if the assistant is currently generating a response
- * @returns {JSX.Element}
+ * @returns {React.ReactElement}
  */
 function MessageList({ messages, isLoading }) {
   // The index of the last message (always assistant when isLoading)
