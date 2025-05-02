@@ -39,6 +39,18 @@ LLM_CONFIG: Dict[str, Any] = {
     "timeout": 30.0,  # Maximum wait time for a response
 }
 
+LLM_FLASH_CONFIG = {
+    "model": "gemini-2.0-flash-lite",  # Google Gemini model
+    "temperature": 0,  # Lower creativity for more factual responses
+    "top_p": 0.85,  # Controls response diversity
+    "top_k": 40,  # Filters top candidate tokens at each step
+    "max_tokens": 1024,  # Maximum response length
+    "disable_streaming": "tool_calling",  # Enable streaming, except when calling external tools
+    "verbose": False,  # Disable detailed logs in production
+    "max_retries": 3,  # Number of retries in case of failure
+    "timeout": 30.0,  # Maximum wait time for a response
+}
+
 # -------------------------
 # Embeddings Configuration
 # -------------------------

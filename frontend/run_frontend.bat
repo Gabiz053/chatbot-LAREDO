@@ -16,6 +16,6 @@ if not exist node_modules\.bin\serve (
 
 REM 3. Serve the production build using the local serve
 echo Starting frontend server...
-call node_modules\.bin\serve -s dist -l 22000
+call npm run dev
 
 REM The production build will be served in this window

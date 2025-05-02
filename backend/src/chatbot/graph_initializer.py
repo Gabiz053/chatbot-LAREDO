@@ -111,7 +111,7 @@ class GraphInitializer:
         """
         question = state["question"].content  # type: ignore
         prompt = TRANSLATE_OPTIMIZE_QUESTION_PROMPT.format(question=question)
-        improved_question = self._model_manager.llm.invoke(prompt).content  # type: ignore
+        improved_question = self._model_manager.flash_llm.invoke(prompt).content  # type: ignore
         improved_message = HumanMessage(content=improved_question)
         return JsonState(improved_question=improved_message)
 
@@ -309,7 +309,7 @@ class GraphInitializer:
         system_messages.append(HumanMessage(content="Summarize the conversation."))
 
         # Invoke the model with the constructed summarization prompt
-        response = self._model_manager.llm.invoke(system_messages)  # type: ignore
+        response = self._model_manager.flash_llm.invoke(system_messages)  # type: ignore
 
         # Identify old messages to remove from the conversation history
         delete_messages: List[RemoveMessage] = [
