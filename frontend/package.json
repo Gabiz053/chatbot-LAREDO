@@ -43,8 +43,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-markdown": "^10.1.0",
-    "react-shadow": "^20.6.0",
-    "serve": "^14.2.4"
+    "react-shadow": "^20.6.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.1",

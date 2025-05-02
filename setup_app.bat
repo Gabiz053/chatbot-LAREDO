@@ -1,22 +1,16 @@
 @echo off
-setlocal
+setlocal enabledelayedexpansion
 
-REM Check Python 3.13
+REM Check Python 3.11
 where python >nul 2>nul
 if errorlevel 1 goto install_python
 for /f "tokens=2 delims= " %%a in ('python --version 2^>nul') do set "PYTHON_VERSION=%%a"
-echo %PYTHON_VERSION% | findstr /b "3.13" >nul
+echo !PYTHON_VERSION! | findstr /b "3.11" >nul
 if errorlevel 1 goto install_python
 
 REM Check Node.js
 where node >nul 2>nul
 if errorlevel 1 goto install_node
-
-REM Check VC++ Redistributable
-winget list --id Microsoft.VCRedist.2015+.x64 > winget_vc.txt 2>nul
-findstr /I "Microsoft.VCRedist.2015" winget_vc.txt >nul
-if errorlevel 1 goto install_vcredist
-del winget_vc.txt
 
 REM Check .env
 if not exist "%~dp0backend\.env" (
@@ -34,40 +28,47 @@ pause
 exit /b 0
 
 :install_python
-echo Python 3.13 not found. Installing...
-winget install --id Python.Python.3.13 --source winget --accept-package-agreements --accept-source-agreements
+echo Python 3.11 not found. Installing...
+winget install --id Python.Python.3.11 --source winget --accept-package-agreements --accept-source-agreements --silent --scope user
 if errorlevel 1 (
     echo Failed to install Python automatically. Opening download page...
-    start https://www.python.org/downloads/
+    start https://www.python.org/downloads/release/python-3110/
     pause
     exit /b 1
 )
-echo Please restart the installer.
-pause
-exit /b 1
+REM Add Python to PATH for current session
+for /f "delims=" %%p in ('where python') do set "PYTHON_PATH=%%~dpsp"
+set "PATH=%PYTHON_PATH%;%PATH%"
+echo Python 3.11 installed and PATH updated.
+goto :check_node
 
 :install_node
 echo Node.js not found. Installing...
-winget install --id OpenJS.NodeJS.LTS --source winget --accept-package-agreements --accept-source-agreements
+winget install --id OpenJS.NodeJS.LTS --source winget --accept-package-agreements --accept-source-agreements --silent --scope user
 if errorlevel 1 (
     echo Failed to install Node.js automatically. Opening download page...
     start https://nodejs.org/
     pause
     exit /b 1
 )
-echo Please restart the installer.
-pause
-exit /b 1
+REM Add Node.js to PATH for current session
+for /f "delims=" %%n in ('where node') do set "NODE_PATH=%%~dpn"
+set "PATH=%NODE_PATH%;%PATH%"
+echo Node.js installed and PATH updated.
 
-:install_vcredist
-echo VC++ Redistributable not found. Installing...
-winget install --id=Microsoft.VCRedist.2015+.x64  -e --accept-package-agreements --accept-source-agreements
+:check_node
+REM Re-check Node.js after install
+where node >nul 2>nul
 if errorlevel 1 (
-    echo Failed to install VC++ Redistributable automatically. Opening download page...
-    start https://learn.microsoft.com/es-es/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-microsoft-visual-c-redistributable-version
+    echo ERROR: Node.js installation failed or not found in PATH.
     pause
     exit /b 1
 )
-echo Please restart the installer.
-pause
-exit /b 1
+REM Re-check Python after install
+where python >nul 2>nul
+if errorlevel 1 (
+    echo ERROR: Python installation failed or not found in PATH.
+    pause
+    exit /b 1
+)
+goto :eof
