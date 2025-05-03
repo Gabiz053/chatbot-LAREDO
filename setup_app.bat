@@ -29,7 +29,7 @@ REM === Functions below ===
         echo ERROR: winget App Installer is not installed or not available in PATH.
         echo Please install winget manually from the Microsoft Store and re-run this script.
         pause
-        exit /b 1
+        exit 1
     )
     exit /b 0
 
@@ -48,7 +48,7 @@ REM === Functions below ===
         echo Failed to install Python automatically. Opening download page...
         start https://www.python.org/downloads/release/python-3110/
         pause
-        exit /b 1
+        exit 1
     )
     set PYTHON_INSTALLED=1
     exit /b 0
@@ -65,7 +65,7 @@ REM === Functions below ===
         echo Failed to install Node.js automatically. Opening download page...
         start https://nodejs.org/
         pause
-        exit /b 1
+        exit 1
     )
     set NODE_INSTALLED=1
     exit /b 0
@@ -74,7 +74,7 @@ REM === Functions below ===
     if not exist "%~dp0backend\.env" (
         echo ERROR: .env file not found in backend folder.
         pause
-        exit /b 1
+        exit 1
     )
     exit /b 0
 
