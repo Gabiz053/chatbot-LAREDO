@@ -1,21 +1,21 @@
 # LaredocMind
 
-## Description
-LaredocMind is an intelligent chatbot platform that enables users to interact with documents and data through a modern web interface and a powerful backend. The application consists of two main parts:
-- **Frontend:** User interface built with React and Tailwind CSS.
-- **Backend:** Python-based REST API that handles conversational logic, document processing, and AI model integration.
+## Overview
 
-This solution is designed to facilitate information retrieval, analysis, and management, allowing users to get contextual and accurate answers from their own documents.
+LaredocMind is an intelligent chatbot platform that enables users to interact with their own documents and data through a modern web interface and a powerful backend. The project is split into two main parts:
+- **Frontend:** A React + Tailwind CSS web widget, distributed as an npm package.
+- **Backend:** A Python REST API for conversational logic, document processing, and AI model integration.
 
 ---
 
-## Quick Setup & Run
+## Quick Setup
 
 ### Prerequisites
-- **Python 3.13+** for the backend.
-- **Node.js** (v22 or higher) aditional tools option not needed.
+- **Python 3.11** (required for backend, must be available as `py -3.11`)
+- **Node.js** (LTS recommended, required for frontend and npm scripts)
+- **winget** (for automatic dependency installation on Windows)
 
-### 1. Clone the repository and enter the main folder
+### 1. Clone the repository
 ```sh
 cd LaredocMind
 ```
@@ -24,42 +24,43 @@ cd LaredocMind
 - Copy `.env.example` to `.env` in the `backend` directory and fill in the required values.
 
 ### 3. Automatic installation (recommended)
-Run the following script from the project root to install dependencies and set up both environments:
+Run the following script from the project root to install all dependencies and set up both environments:
 ```sh
 setup_app.bat
 ```
-This will open two terminals: one for the backend and one for the frontend. Follow the instructions in each window.
+- The script will check for Python 3.11 and Node.js, installing them if needed.
+- If Python or Node.js is installed during this process, you will be asked to close and re-run the script.
 
 ### 4. Running the application
-To start the full application in development mode:
+To start both backend and frontend in development mode:
 ```sh
 run-app.bat
 ```
-This will open two terminals: one running the backend and the other running the frontend.
+- This will launch both servers in the same terminal session.
 
 ---
 
 ## Project Structure
 ```
-chatbot-laredo/
-├── backend/         # API, business logic, and data processing
-├── frontend/        # Web interface and chat widget
-├── run-app.bat      # Script to run the entire app
-├── setup_app.bat    # Script to install dependencies for both environments
-└── LICENSE          # MIT License
+LaredocMind/
+├── backend/         # Python backend (API, business logic, data processing)
+├── frontend/        # React frontend (chat widget, npm package)
+├── run-app.bat      # Script to run both backend and frontend
+├── setup_app.bat    # Script to install all dependencies and set up environments
+└── LICENSE
 ```
 
-- See the `README.md` files in `backend/` and `frontend/` for technical details and troubleshooting specific to each part.
+- See the `README.md` files in `backend/` and `frontend/` for technical details, development, and publishing instructions.
 
 ---
 
-## Basic Usage
-1. Access the web interface at [http://localhost:22000](http://localhost:22000) (or your configured port).
-2. Interact with the chatbot!
+## Usage
+
+1. Open your browser at [http://localhost:21000](http://localhost:21000) (default frontend port).
+2. Interact with the chatbot using your own documents.
 
 ---
 
 ## License
-This project is licensed under the MIT License. You are free to use, modify, and distribute the software as long as you retain the copyright notice.
 
-See the `LICENSE` file for more information.
+This project is licensed under the MIT License. See the `LICENSE` file for details.

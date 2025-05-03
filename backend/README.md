@@ -28,31 +28,28 @@ You can set up and run the backend using either the quick script option or by fo
 
 ### Manual Option
 
-1. **Prerequisites:**
-   - Make sure you have **Python 3.13 or higher** installed. Check by running `python --version` in your terminal.
-
-2. **Create and activate a virtual environment:**
+1. **Create and activate a virtual environment:**
    ```sh
    python -m venv .venv
    .venv\Scripts\activate
    ```
 
-3. **Install Poetry (if not already installed):**
+2. **Install Poetry (if not already installed):**
    ```sh
    pip install poetry
    ```
 
-4. **Install project dependencies:**
+3. **Install project dependencies:**
    ```sh
    poetry install
    ```
 
-5. **Run the backend server:**
+4. **Run the backend server:**
    ```sh
    .\run_backend.bat
    ```
 
-6. **Verify the backend is running:**
+5. **Verify the backend is running:**
    Open your browser and go to [http://localhost:20000/hello](http://localhost:20000/hello). If everything is working, you will see a greeting message. Change 20000 to the port you selected. (20000 by default)
 
 ## Project Structure

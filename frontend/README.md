@@ -67,6 +67,32 @@ You can set up and run the frontend using either the quick script option, the pr
    ```
 3. Open your browser and go to [http://localhost:21000](http://localhost:21000) (the production build will be served on this port).
 
+## Publishing the NPM Package
+
+To publish a new version of the LaredocMind frontend package to npm, follow these steps:
+
+1. **Build the package:**
+   ```sh
+   npm run build
+   ```
+   This will generate the production build in the `dist/` folder.
+
+2. **Update the CSS:**
+   - Copy the generated CSS file from `dist/laredocmind.css` and replace the existing CSS file in `src/ui/styles/` with the new one.
+   - Make sure the new CSS is correctly referenced in your components or entry point.
+
+3. **Update the package version:**
+   - Open `package.json` and increment the `version` field according to [semantic versioning](https://semver.org/).
+
+4. **Publish to npm:**
+   ```sh
+   npm publish
+   ```
+   Make sure you are logged in to the correct npm account (`npm login`) and have the necessary permissions to publish the package.
+
+5. **Verify the publication:**
+   - Check the npm registry or your npm account to ensure the new version is available.
+
 ## Project Structure
 
 ```
