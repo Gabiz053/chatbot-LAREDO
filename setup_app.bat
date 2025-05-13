@@ -36,7 +36,7 @@ REM === Functions below ===
 :check_python
     where python >nul 2>nul
     if errorlevel 1 goto install_python
-    for /f "tokens=2 delims= " %%a in ('python --version 2^>nul') do set "PYTHON_VERSION=%%a"
+    for /f "tokens=2 delims= " %%a in ('py -3.11 --version 2^>nul') do set "PYTHON_VERSION=%%a"
     echo !PYTHON_VERSION! | findstr /b "3.11" >nul
     if errorlevel 1 goto install_python
     exit /b 0
