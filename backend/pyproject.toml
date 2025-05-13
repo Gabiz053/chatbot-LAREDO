@@ -10,32 +10,32 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 # Core libraries
-python = ">=3.11, <4.0"
-loguru = "*"
+python = "3.11.9"
+loguru = "0.7.3"
 
 # LangChain and related packages
-langchain = "*"
-langchain-chroma = "*"
-langchain-community = "*"
-langchain-google-genai = "*"
-langchain-ollama = "*"
-langsmith = "*"
-langgraph = "*"
+langchain = "0.3.25"
+langchain-chroma = "0.2.3"
+langchain-community = "0.3.23"
+langchain-google-genai = "2.1.4"
+langchain-ollama = "0.3.2"
+langsmith = "0.3.42"
+langgraph = "0.4.1"
 
 # Web scraping and markdown processing
-bs4 = "*"
-markdownify = "*"
+bs4 = "0.0.2"
+markdownify = "1.1.0"
 
 # Environment variables
-dotenv = "*"
+dotenv = "0.9.9"
 
 # Natural language processing
-nltk = "*"
-rouge-score = "*"
+nltk = "3.9.1"
+rouge-score = "0.1.2"
 
 # Web framework
-flask = "*"
-flask_cors = "*"
+flask = "3.1.0"
+flask_cors = "5.0.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
