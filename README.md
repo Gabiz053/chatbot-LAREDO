@@ -55,7 +55,9 @@ LaredocMind/
 ---
 
 ## Chatbot demo
-![Demo de la aplicación](demostracion-uso-chatbot.gif)
+You can see an example of use in "demostracion-uso-chatbot.gif"
+
+![Demo de la aplicación](./demostracion-uso-chatbot.gif)
 
 ---
 
