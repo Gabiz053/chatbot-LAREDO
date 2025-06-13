@@ -54,6 +54,11 @@ LaredocMind/
 
 ---
 
+## Chatbot demo
+![Demo de la aplicación](demostracion-uso-chatbot.gif)
+
+---
+
 ## Usage
 
 1. Open your browser at [http://localhost:21000](http://localhost:21000) (default frontend port).
